@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body data-admin-page="dashboard">
+    <div class="admin-layout">
+      <aside class="sidebar">
+        <div class="brand">
+          Financial <span class="brand-accent">Manager</span>
+        </div>
+
+        <nav class="menu" aria-label="Main menu">
+          <a
+            class="menu-item active"
+            href="../pages/admin.html"
+            data-menu="dashboard"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"
+              ></path>
+            </svg>
+            Dashboard
+          </a>
+          <a
+            class="menu-item"
+            href="../pages/admin-users.html"
+            data-menu="users"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M16 11c1.66 0 2.99-1.57 2.99-3.5S17.66 4 16 4s-3 1.57-3 3.5S14.34 11 16 11zm-8 0c1.66 0 2.99-1.57 2.99-3.5S9.66 4 8 4 5 5.57 5 7.5 6.34 11 8 11zm0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.95 1.97 3.45V20h6v-3.5c0-2.33-4.67-3.5-7-3.5z"
+              ></path>
+            </svg>
+            Users
+          </a>
+          <a
+            class="menu-item"
+            href="../pages/admin-category.html"
+            data-menu="category"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M3 5h18v14H3V5zm2 2v10h14V7H5zm2 2h5v2H7V9zm0 4h10v2H7v-2z"
+              ></path>
+            </svg>
+            Category
+          </a>
+        </nav>
+
+        <div class="signout">
+          <button class="menu-item" id="signOutBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M10 17l1.41-1.41L8.83 13H20v-2H8.83l2.58-2.59L10 7l-5 5 5 5zm-6 4h8v-2H4V5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2z"
+              ></path>
+            </svg>
+            Sign out
+          </button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <button class="icon-btn" type="button" aria-label="Profile">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="#5a5a64"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a3.5 3.5 0 110 7 3.5 3.5 0 010-7zm0 14c-2.36 0-4.43-1.21-5.64-3.04.03-2 4-3.1 5.64-3.1 1.63 0 5.61 1.1 5.64 3.1A6.96 6.96 0 0112 19z"
+              ></path>
+            </svg>
+          </button>
+        </header>
+
+        <section class="metrics">
+          <article class="metric-card">
+            <p class="metric-label">USER</p>
+            <div class="metric-body">
+              <h3 class="metric-value" id="kpiUserTotal">0</h3>
+              <p class="metric-delta" id="kpiUserDelta">
+                Active 0 | Inactive 0
+              </p>
+            </div>
+          </article>
+
+          <article class="metric-card">
+            <p class="metric-label">CATEGORY</p>
+            <div class="metric-body">
+              <h3 class="metric-value">500</h3>
+              <p class="metric-delta down">+ 14% ↓</p>
+            </div>
+          </article>
+
+          <article class="metric-card">
+            <p class="metric-label">SPENDING</p>
+            <div class="metric-body">
+              <h3 class="metric-value">84,382</h3>
+              <p class="metric-delta up">+ 36% ↑</p>
+            </div>
+          </article>
+
+          <article class="metric-card">
+            <p class="metric-label">TOTAL MONEY</p>
+            <div class="metric-body">
+              <h3 class="metric-value">33,493,022 $</h3>
+              <p class="metric-delta up">+ 36% ↑</p>
+            </div>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel chart-panel">
+            <div class="panel-head">
+              <h2 class="panel-title">report money</h2>
+              <div class="period-tabs" aria-label="Time range">
+                <button class="tab-btn active" type="button" data-period="12m">
+                  12 Months
+                </button>
+                <button class="tab-btn" type="button" data-period="6m">
+                  6 Months
+                </button>
+                <button class="tab-btn" type="button" data-period="30d">
+                  30 Days
+                </button>
+                <button class="tab-btn" type="button" data-period="7d">
+                  7 Days
+                </button>
+              </div>
+              <button class="export-btn" type="button">Export PDF</button>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="financeChart"></canvas>
+            </div>
+          </article>
+
+          <article class="panel customers-panel">
+            <h2 class="panel-title">Recent Customers</h2>
+            <p class="customers-sub">Lorem ipsum dolor sit ametis.</p>
+
+            <ul class="customer-list">
+              <li class="customer-item">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/64?img=32"
+                  alt="Jenny Wilson"
+                />
+                <div>
+                  <p class="customer-name">Jenny Wilson</p>
+                  <p class="customer-mail">jenny-wilson@gmail.com</p>
+                </div>
+                <div>
+                  <p class="customer-money">$11,234</p>
+                  <p class="customer-city">Austin</p>
+                </div>
+              </li>
+
+              <li class="customer-item">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/64?img=53"
+                  alt="Devon Lane"
+                />
+                <div>
+                  <p class="customer-name">Devon Lane</p>
+                  <p class="customer-mail">devon-lane@gmail.com</p>
+                </div>
+                <div>
+                  <p class="customer-money">$11,159</p>
+                  <p class="customer-city">New York</p>
+                </div>
+              </li>
+
+              <li class="customer-item">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/64?img=41"
+                  alt="Jane Cooper"
+                />
+                <div>
+                  <p class="customer-name">Jane Cooper</p>
+                  <p class="customer-mail">jane-cooper@gmail.com</p>
+                </div>
+                <div>
+                  <p class="customer-money">$10,483</p>
+                  <p class="customer-city">Toledo</p>
+                </div>
+              </li>
+
+              <li class="customer-item">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/64?img=47"
+                  alt="Dianne Russell"
+                />
+                <div>
+                  <p class="customer-name">Dianne Russell</p>
+                  <p class="customer-mail">dianne-russell@gmail.com</p>
+                </div>
+                <div>
+                  <p class="customer-money">$9,084</p>
+                  <p class="customer-city">Naperville</p>
+                </div>
+              </li>
+            </ul>
+
+            <button class="see-all" type="button">SEE ALL CUSTOMERS ></button>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="../js/admin-layout.js"></script>
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

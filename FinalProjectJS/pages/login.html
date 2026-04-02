@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" href="../css/login.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="login-container">
+      <form class="login-box" id="loginForm">
+        <h2><i class="fa-solid fa-lock"></i> Sign In</h2>
+        <p id="successMsg" class="success"></p>
+
+        <input type="email" id="email" placeholder="Email..." />
+        <span class="error" id="emailError"></span>
+
+        <input type="password" id="password" placeholder="Password..." />
+        <span class="error" id="passwordError"></span>
+
+        <label class="remember-row" for="rememberMe">
+          <input type="checkbox" id="rememberMe" />
+          Remember your account and password
+        </label>
+
+        <button type="button" id="loginBtn">Sign In</button>
+
+        <p>You don't have account? <a href="register.html">Sign Up Now</a></p>
+      </form>
+    </div>
+
+    <script src="../js/login.js"></script>
+  </body>
+</html>

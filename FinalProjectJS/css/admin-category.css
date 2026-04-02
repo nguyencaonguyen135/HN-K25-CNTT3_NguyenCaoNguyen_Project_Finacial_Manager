@@ -1,0 +1,53 @@
+.category-topbar {
+  justify-content: space-between;
+}
+
+.add-category-btn {
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.category-image-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-mini {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-edit {
+  background: #f39c12;
+}
+
+.btn-block {
+  background: #df5d5d;
+}
+
+.btn-unblock {
+  background: #39bf6d;
+}
+
+@media (max-width: 900px) {
+  .category-topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+}

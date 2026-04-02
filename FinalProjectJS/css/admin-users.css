@@ -1,0 +1,278 @@
+.users-topbar {
+  justify-content: flex-end;
+}
+
+.search-wrap {
+  position: relative;
+  width: 320px;
+}
+
+.search-wrap input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #f7f8fc;
+  color: #5f6880;
+  padding: 10px 34px 10px 14px;
+  font-size: 13px;
+}
+
+.search-wrap input:focus {
+  outline: none;
+  border-color: #bfc7da;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #98a0b5;
+  font-size: 14px;
+}
+
+.users-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 0 18px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.users-table th,
+.users-table td {
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 14px;
+}
+
+.users-table th {
+  color: #7f879d;
+  font-weight: 700;
+  border-bottom: 1px solid #edf0f6;
+  background: #f9fafe;
+}
+
+.users-table td {
+  border-bottom: 1px solid #edf0f6;
+  color: #2c3142;
+}
+
+.users-table td:nth-child(1) {
+  width: 56px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.status-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-pill.active {
+  background: #eaf9f1;
+  color: #0f9f60;
+}
+
+.status-pill.active::before {
+  background: #0f9f60;
+}
+
+.status-pill.inactive {
+  background: #ffeff0;
+  color: #db4c62;
+}
+
+.status-pill.inactive::before {
+  background: #db4c62;
+}
+
+.action-btn {
+  border: none;
+  background: transparent;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.btn-mini {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.btn-edit {
+  background: #f39c12;
+}
+
+.action-btn.locked {
+  color: #1ca66f;
+}
+
+.action-btn.unlocked {
+  color: #e35c63;
+}
+
+.users-empty {
+  margin: 18px;
+  color: #7e869e;
+  font-size: 14px;
+}
+
+.users-pagination {
+  margin-top: 18px;
+  padding: 0 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.page-btn {
+  min-width: 30px;
+  height: 30px;
+  border: 1px solid #d7deec;
+  border-radius: 6px;
+  background: #fff;
+  color: #64708e;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.page-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.page-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 34, 54, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal-card {
+  width: min(520px, calc(100vw - 24px));
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #d8dff0;
+  box-shadow: 0 20px 40px rgba(17, 25, 56, 0.24);
+  padding: 16px;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.modal-head h3 {
+  margin: 0;
+}
+
+.modal-close {
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #f0f3fb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modal-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #56607b;
+}
+
+.modal-form input,
+.modal-form select {
+  border: 1px solid #d5dced;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+.modal-actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-secondary,
+.btn-primary {
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #eef1f8;
+  color: #516082;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  .search-wrap {
+    width: 100%;
+  }
+
+  .users-topbar {
+    justify-content: stretch;
+  }
+
+  .modal-form {
+    grid-template-columns: 1fr;
+  }
+}

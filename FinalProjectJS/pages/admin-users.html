@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Users</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/admin-users.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body data-admin-page="users">
+    <div class="admin-layout">
+      <aside class="sidebar">
+        <div class="brand">
+          Financial <span class="brand-accent">Manager</span>
+        </div>
+
+        <nav class="menu" aria-label="Main menu">
+          <a class="menu-item" href="../pages/admin.html" data-menu="dashboard">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM3 13h5v8H3v-8zm7 0h11v8H10v-8z"
+              ></path>
+            </svg>
+            Dashboard
+          </a>
+          <a
+            class="menu-item active"
+            href="../pages/admin-users.html"
+            data-menu="users"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M16 11c1.66 0 2.99-1.57 2.99-3.5S17.66 4 16 4s-3 1.57-3 3.5S14.34 11 16 11zm-8 0c1.66 0 2.99-1.57 2.99-3.5S9.66 4 8 4 5 5.57 5 7.5 6.34 11 8 11zm0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.95 1.97 3.45V20h6v-3.5c0-2.33-4.67-3.5-7-3.5z"
+              ></path>
+            </svg>
+            Users
+          </a>
+          <a
+            class="menu-item"
+            href="../pages/admin-category.html"
+            data-menu="category"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M3 5h18v14H3V5zm2 2v10h14V7H5zm2 2h5v2H7V9zm0 4h10v2H7v-2z"
+              ></path>
+            </svg>
+            Category
+          </a>
+        </nav>
+
+        <div class="signout">
+          <button class="menu-item" id="signOutBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M10 17l1.41-1.41L8.83 13H20v-2H8.83l2.58-2.59L10 7l-5 5 5 5zm-6 4h8v-2H4V5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2z"
+              ></path>
+            </svg>
+            Sign out
+          </button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar users-topbar">
+          <div></div>
+          <div class="search-wrap">
+            <input
+              id="userSearchInput"
+              type="text"
+              placeholder="Search here ..."
+            />
+            <span class="search-icon">⌕</span>
+          </div>
+        </header>
+
+        <section class="users-panel">
+          <div class="table-wrap">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Gender</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+            <p id="usersEmpty" class="users-empty" hidden>No users found.</p>
+          </div>
+
+          <div class="users-pagination" id="usersPagination"></div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-overlay" id="userModalOverlay" hidden>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="userModalTitle"
+      >
+        <div class="modal-head">
+          <h3 id="userModalTitle">User Detail</h3>
+          <button
+            class="modal-close"
+            id="userModalClose"
+            type="button"
+            aria-label="Close"
+          >
+            x
+          </button>
+        </div>
+        <div class="modal-form">
+          <label>
+            Full Name
+            <input id="modalFullName" type="text" />
+          </label>
+          <label>
+            Email
+            <input id="modalEmail" type="email" />
+          </label>
+          <label>
+            Phone
+            <input id="modalPhone" type="text" />
+          </label>
+          <label>
+            Gender
+            <select id="modalGender">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </label>
+          <label>
+            Status
+            <select id="modalStatus">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="userModalCancel">
+            Cancel
+          </button>
+          <button type="button" class="btn-primary" id="userModalSave">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/admin-layout.js"></script>
+    <script src="../js/admin-users.js"></script>
+  </body>
+</html>

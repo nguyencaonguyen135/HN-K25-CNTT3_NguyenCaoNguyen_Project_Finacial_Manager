@@ -1,0 +1,409 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: #eef0f5;
+  color: #222;
+}
+
+.header {
+  background: #4338ca;
+  color: #fff;
+  height: 56px;
+  padding: 0 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.account {
+  font-size: 16px;
+  position: relative;
+}
+
+.account-toggle {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 0;
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1;
+}
+
+.account-toggle:hover {
+  opacity: 0.85;
+}
+
+.account-label {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.account-caret {
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(2px) rotate(0deg);
+  transform-origin: center;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.account-caret img {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.account.open .account-caret {
+  transform: translateY(2px) rotate(180deg);
+}
+
+.account-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 210px;
+  background: #fff;
+  color: #222;
+  border-radius: 12px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+  padding: 10px;
+  z-index: 50;
+}
+
+.account-info {
+  padding: 8px;
+}
+
+.account-info-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.account-info-value {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.account-info-sub {
+  font-size: 12px;
+  color: #4b5563;
+  margin-bottom: 2px;
+}
+
+.account.open .account-menu {
+  display: block;
+}
+
+.menu-separator {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 6px 0;
+}
+
+.menu-item {
+  width: 100%;
+  text-align: center;
+  border: none;
+  background: #e0defc;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.menu-item:hover {
+  background: #eef2ff;
+}
+
+.menu-danger {
+  color: #dc2626;
+}
+
+.menu-danger:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.sidebar {
+  width: 220px;
+  padding: 15px;
+  position: fixed;
+  left: 8px;
+  top: 64px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 30px;
+  padding: 18px;
+  margin-bottom: 6px;
+  border: 1px solid #6366f1;
+  border-radius: 6px;
+  color: #1f2937;
+  font-size: 15px;
+  text-decoration: none;
+  background: #ffffff;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.sidebar-item .icon {
+  font-size: 14px;
+}
+
+.sidebar-item:hover {
+  background: #eef2ff;
+}
+
+.sidebar-item.active {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.hero {
+  width: 800px;
+  margin: 18px auto 14px;
+  background: #4f46e5;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+  padding: 20px 16px;
+  box-shadow: 0 4px 14px rgba(75, 69, 200, 0.35);
+}
+
+.hero h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.hero p {
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+.container {
+  width: 800px;
+  margin: 0 auto;
+  border: 3px solid #f2f2f2;
+  padding: 14px 16px 16px;
+  background: #f7f7fb;
+}
+
+.title {
+  text-align: center;
+  color: #4b45c8;
+  padding-bottom: 30px;
+  margin: 2px 0 12px;
+  font-weight: 500;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.card-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  font-size: 16px;
+  gap: 12px;
+}
+
+.budget-card,
+.inline-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.result-card {
+  text-align: center;
+  padding: 40px;
+}
+
+.result-card p {
+  color: #666;
+  margin-bottom: 6px;
+  font-size: 20px;
+}
+
+.money {
+  color: #22c55e;
+  font-size: 23px;
+  font-weight: 300;
+}
+
+label {
+  color: #666;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+input,
+select {
+  height: 40px;
+  border: 1px solid #d9dfe8;
+  border-radius: 5px;
+  padding: 0 10px;
+  outline: none;
+  background: #fff;
+}
+
+input:focus,
+select:focus {
+  border-color: #4b45c8;
+}
+
+#monthSelect {
+  width: 195px;
+}
+
+#budgetInput {
+  width: 140px;
+}
+
+/* PROFILE */
+.profile {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.title-profile {
+  color: #4f46e5;
+  margin-top: 30px;
+  margin-bottom: 21px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.profile i {
+  font-size: 15px;
+  color: #fe2525;
+}
+
+input {
+  width: 100%;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #4f46e5;
+  color: #f4f2fd;
+  cursor: pointer;
+}
+
+/* BUTTON */
+.btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn-outline {
+  width: 380px;
+  padding: 10px;
+  font-size: 13px;
+  margin-top: 20px;
+  font-weight: 600;
+  color: #4f46e5;
+  background-color: #f4f2fd;
+  border: 2px solid #4f46e5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-outline:hover {
+  background: #4f46e5;
+  color: #f4f2fd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn {
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+}
+
+.btn-blue {
+  background: #4f80f8;
+}
+
+.btn-green {
+  background: #19b45a;
+}
+
+.btn:hover {
+  opacity: 0.92;
+}
+
+.list {
+  list-style: none;
+  margin-top: 10px;
+}
+
+.list li {
+  font-size: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid #eceff4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer {
+  margin-top: 27px;
+  background: #4b45c8;
+  color: #fff;
+  text-align: center;
+  padding: 16px 10px;
+  font-size: 12px;
+}

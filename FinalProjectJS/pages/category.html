@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tài Chính Cá Nhân</title>
+    <link rel="stylesheet" href="../css/category.css" />
+    <link rel="stylesheet" href="../css/reponsive.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo">📒 Tài Chính Cá Nhân</div>
+      <div class="account" id="account">
+        <button type="button" id="accountToggle" class="account-toggle">
+          <span id="currentUserName" class="account-label">Tài khoản</span>
+          <span class="account-caret" aria-hidden="true"
+            ><img src="../assets/icons/SVG.png" alt=""
+          /></span>
+        </button>
+        <div
+          id="accountMenu"
+          class="account-menu"
+          role="menu"
+          aria-label="Tài khoản"
+        >
+          <div class="account-info">
+            <p class="account-info-label">Thông tin tài khoản</p>
+            <p id="accountInfoName" class="account-info-value">-</p>
+            <p id="accountInfoEmail" class="account-info-sub">-</p>
+            <p id="accountInfoRole" class="account-info-sub">-</p>
+          </div>
+          <div class="menu-separator"></div>
+          <button
+            type="button"
+            class="menu-item menu-danger"
+            id="menuLogout"
+            role="menuitem"
+          >
+            Đăng Xuất
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <aside class="sidebar" aria-label="Sidebar navigation">
+      <a
+        class="sidebar-item"
+        data-page="information"
+        href="../pages/index.html"
+      >
+        <span class="icon"
+          ><img src="../assets/icons/information.png" alt="Information"
+        /></span>
+        <span>Information</span>
+      </a>
+
+      <a
+        class="sidebar-item active"
+        data-page="category"
+        href="../pages/category.html"
+      >
+        <span class="icon"
+          ><img src="../assets/icons/category2.png" alt="Category"
+        /></span>
+        <span>Category</span>
+      </a>
+
+      <a class="sidebar-item" data-page="history" href="../pages/history.html">
+        <span class="icon"
+          ><img src="../assets/icons/history.png" alt="History"
+        /></span>
+        <span>History</span>
+      </a>
+    </aside>
+
+    <section class="hero">
+      <h2>🎯 Kiểm soát chi tiêu thông minh</h2>
+      <p>Theo dõi ngân sách và thu chi hàng tháng dễ dàng</p>
+    </section>
+
+    <main class="container">
+      <h2 class="title">📊 Quản Lý Tài Chính Cá Nhân</h2>
+
+      <section class="card result-card">
+        <p>Số tiền còn lại</p>
+        <h3 id="remainingText" class="money">0 VND</h3>
+      </section>
+
+      <section class="card card-center" id="monthSection">
+        <label for="monthSelect">📅 Chọn tháng:</label>
+        <input type="month" id="monthSelect" />
+      </section>
+
+      <section class="card" id="categoriesSection">
+        <h3 class="section-title">
+          <i class="fa-solid fa-briefcase"></i> Quan ly danh muc (Theo thang)
+        </h3>
+
+        <div class="inline-form">
+          <select id="categoryNameSelect" title="Ten danh muc">
+            <option value="">Ten danh muc</option>
+            <option value="Tien tich luy">Tien tich luy</option>
+            <option value="An uong">An uong</option>
+            <option value="Di lai">Di lai</option>
+            <option value="Mua sam">Mua sam</option>
+            <option value="Giai tri">Giai tri</option>
+          </select>
+
+          <input
+            type="number"
+            id="categoryLimitInput"
+            placeholder="Gioi han (VND)"
+          />
+          <button type="button" id="addCategoryBtn" class="btn-add">
+            Them danh muc
+          </button>
+        </div>
+
+        <p id="categoryWarning" class="warning-text"></p>
+
+        <div id="categoryGrid" class="category-grid"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      © 2026 Quản Lý Tài Chính Cá Nhân. by Cao Nguyên!
+    </footer>
+
+    <script src="../js/category.js"></script>
+  </body>
+</html>

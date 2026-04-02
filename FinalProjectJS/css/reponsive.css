@@ -1,0 +1,200 @@
+/* Desktop nhỏ */
+@media (max-width: 992px) {
+	.hero,
+	.container {
+		width: calc(100% - 28px);
+	}
+
+	.header {
+		justify-content: space-between;
+		padding: 0 14px;
+	}
+
+	.logo {
+		font-size: 16px;
+	}
+
+	.account-label {
+		font-size: 16px;
+	}
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+	.header {
+		height: auto;
+		min-height: 52px;
+		padding: 10px 12px;
+		gap: 10px;
+	}
+
+	.logo {
+		font-size: 15px;
+		max-width: 58%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.account-label {
+		font-size: 15px;
+	}
+
+	.account-caret {
+		font-size: 16px;
+	}
+
+	.account-menu {
+		right: 0;
+		min-width: 180px;
+		max-width: min(260px, 90vw);
+	}
+
+	.hero {
+		margin-top: 14px;
+		padding: 16px 12px;
+	}
+
+	.hero h2 {
+		font-size: 16px;
+	}
+
+	.container {
+		border-width: 2px;
+		padding: 12px;
+	}
+
+	.card {
+		padding: 14px 12px;
+		margin-bottom: 12px;
+	}
+
+	.budget-card,
+	.inline-form,
+	.card-center {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	input,
+	select,
+	.btn,
+	#monthSelect,
+	#budgetInput,
+	#categoryNameInput,
+	#categoryLimitInput,
+	#amountInput,
+	#transactionCategorySelect,
+	#noteInput,
+	#searchInput {
+		width: 100% !important;
+	}
+
+	.pagination {
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.page-btn {
+		min-width: 32px;
+	}
+
+	.table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+	}
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+	.header {
+		padding: 10px;
+	}
+
+	.logo {
+		font-size: 14px;
+		max-width: 52%;
+	}
+
+	.account-toggle {
+		gap: 6px;
+	}
+
+	.account-label {
+		font-size: 14px;
+	}
+
+	.account-menu {
+		right: -6px;
+		min-width: 165px;
+		padding: 8px;
+	}
+
+	.menu-item {
+		font-size: 12px;
+		padding: 9px 8px;
+	}
+
+	.title {
+		font-size: 18px;
+	}
+
+	.hero h2 {
+		font-size: 15px;
+	}
+
+	.hero p {
+		font-size: 11px;
+	}
+
+	.card h3 {
+		font-size: 16px;
+	}
+
+	.list li,
+	.table th,
+	.table td,
+	label,
+	.btn,
+	.warning-box {
+		font-size: 12px;
+	}
+}
+
+@media (max-width: 960px) {
+  .hero,
+  .container {
+    width: calc(100% - 24px);
+  }
+
+  .sidebar {
+    position: static;
+    width: calc(100% - 24px);
+    margin: 10px auto 0;
+    display: flex;
+    gap: 8px;
+  }
+
+  .sidebar-item {
+    margin-bottom: 0;
+    justify-content: center;
+  }
+
+  .inline-form {
+    grid-template-columns: 1fr;
+  }
+
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-title {
+    font-size: 14px;
+  }
+
+  .card-limit {
+    font-size: 12px;
+  }
+}
+
