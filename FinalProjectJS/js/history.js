@@ -59,6 +59,21 @@ const getUsers = () => getData("users", defaultUsers);
 const saveUsers = (users) => setData("users", users);
 const getBudgets = () => getData("budgets", {});
 const saveBudgets = (data) => setData("budgets", data);
+const getRemainingBudgets = () => getData("remainingBudgets", {});
+const saveRemainingBudgets = (data) => setData("remainingBudgets", data);
+
+const getSpentByMonth = (month) => {
+  const transactions = getData("transactions", []);
+  return transactions
+    .filter((item) => String(item.createdDate || "").startsWith(month))
+    .reduce((total, item) => total + Number(item.total || 0), 0);
+};
+
+const setRemainingByMonth = (month, remaining) => {
+  const remainingBudgets = getRemainingBudgets();
+  remainingBudgets[month] = Number(remaining || 0);
+  saveRemainingBudgets(remainingBudgets);
+};
 
 const state = {
   month: getCurrentMonth(),
@@ -314,6 +329,7 @@ const deleteTransaction = (index) => {
 
   transactions.splice(index, 1);
   setData("transactions", transactions);
+  renderBudget();
   renderTable();
 };
 
@@ -356,6 +372,7 @@ const addTransaction = () => {
   categoryInput.value = "";
 
   state.page = 1;
+  renderBudget();
   renderTable();
 };
 
@@ -364,8 +381,12 @@ const renderBudget = () => {
   if (!remainingText) return;
 
   const budgets = getBudgets();
-  const money = Number(budgets[state.month] || 0);
-  remainingText.textContent = formatVnd(money);
+  const budgetAmount = Number(budgets[state.month] || 0);
+  const spentAmount = getSpentByMonth(state.month);
+  const remainingAmount = budgetAmount - spentAmount;
+
+  setRemainingByMonth(state.month, remainingAmount);
+  remainingText.textContent = formatVnd(remainingAmount);
 };
 
 const initMonthBudget = () => {
@@ -469,6 +490,7 @@ const init = () => {
   initAccountDropdown();
   initMonthBudget();
   initHistoryActions();
+  window.addEventListener("focus", renderBudget);
 };
 
 document.addEventListener("DOMContentLoaded", init);

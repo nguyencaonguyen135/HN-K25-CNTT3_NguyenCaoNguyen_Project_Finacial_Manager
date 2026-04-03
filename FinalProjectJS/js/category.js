@@ -22,6 +22,36 @@ const getCurrentMonth = () => {
 const formatVnd = (value) =>
   `${Number(value || 0).toLocaleString("vi-VN")} VND`;
 
+const getBudgets = () => getData("budgets", {});
+const getRemainingBudgets = () => getData("remainingBudgets", {});
+const saveRemainingBudgets = (data) => setData("remainingBudgets", data);
+
+const getSpentByMonth = (month) => {
+  const transactions = getData("transactions", []);
+  return transactions
+    .filter((item) => String(item.createdDate || "").startsWith(month))
+    .reduce((total, item) => total + Number(item.total || 0), 0);
+};
+
+const setRemainingByMonth = (month, remaining) => {
+  const remainingBudgets = getRemainingBudgets();
+  remainingBudgets[month] = Number(remaining || 0);
+  saveRemainingBudgets(remainingBudgets);
+};
+
+const renderRemainingBudget = (month) => {
+  const remainingText = byId("remainingText");
+  if (!remainingText) return;
+
+  const budgets = getBudgets();
+  const budgetAmount = Number(budgets[month] || 0);
+  const spentAmount = getSpentByMonth(month);
+  const remainingAmount = budgetAmount - spentAmount;
+
+  setRemainingByMonth(month, remainingAmount);
+  remainingText.textContent = formatVnd(remainingAmount);
+};
+
 const initStorage = () => {
   if (!localStorage.getItem("monthlyCategories"))
     setData("monthlyCategories", []);
@@ -301,6 +331,7 @@ const initCategoryActions = () => {
   addCategoryBtn.addEventListener("click", () => addCategory(getMonth()));
 
   monthSelect.addEventListener("change", () => {
+    renderRemainingBudget(getMonth());
     renderCategories(getMonth());
   });
 
@@ -315,6 +346,8 @@ const initCategoryActions = () => {
     if (action === "delete") deleteCategory(getMonth(), id);
   });
 
+  renderRemainingBudget(getMonth());
+  window.addEventListener("focus", () => renderRemainingBudget(getMonth()));
   renderCategories(getMonth());
 };
 
