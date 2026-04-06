@@ -230,64 +230,72 @@ const initEvents = () => {
   const modalSave = byId("userModalSave");
   const modalOverlay = byId("userModalOverlay");
 
-  searchInput?.addEventListener("input", () => {
-    state.keyword = searchInput.value || "";
-    state.page = 1;
-    renderTable();
-  });
-
-  body?.addEventListener("click", (event) => {
-    const btn = event.target.closest("button[data-action]");
-    if (!btn) return;
-
-    const action = btn.dataset.action;
-    const id = btn.dataset.id;
-    if (action === "toggle") {
-      toggleStatus(id);
-      return;
-    }
-
-    if (action === "edit") {
-      const user = getUsers().find((u) => Number(u.id) === Number(id));
-      if (!user) return;
-      openModal(user);
-    }
-  });
-
-  modalClose?.addEventListener("click", closeModal);
-  modalCancel?.addEventListener("click", closeModal);
-  modalSave?.addEventListener("click", saveModal);
-
-  modalOverlay?.addEventListener("click", (event) => {
-    if (event.target === modalOverlay) closeModal();
-  });
-
-  pagination?.addEventListener("click", (event) => {
-    const btn = event.target.closest("button.page-btn");
-    if (!btn) return;
-
-    const nav = btn.dataset.nav;
-    if (nav === "prev") {
-      state.page = Math.max(1, state.page - 1);
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      state.keyword = searchInput.value || "";
+      state.page = 1;
       renderTable();
-      return;
-    }
+    });
+  }
 
-    if (nav === "next") {
-      const totalPage = Math.max(
-        1,
-        Math.ceil(getDisplayUsers().length / state.pageSize),
-      );
-      state.page = Math.min(totalPage, state.page + 1);
+  if (body) {
+    body.addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-action]");
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+      const id = btn.dataset.id;
+      if (action === "toggle") {
+        toggleStatus(id);
+        return;
+      }
+
+      if (action === "edit") {
+        const user = getUsers().find((u) => Number(u.id) === Number(id));
+        if (!user) return;
+        openModal(user);
+      }
+    });
+  }
+
+  if (modalClose) modalClose.addEventListener("click", closeModal);
+  if (modalCancel) modalCancel.addEventListener("click", closeModal);
+  if (modalSave) modalSave.addEventListener("click", saveModal);
+
+  if (modalOverlay) {
+    modalOverlay.addEventListener("click", (event) => {
+      if (event.target === modalOverlay) closeModal();
+    });
+  }
+
+  if (pagination) {
+    pagination.addEventListener("click", (event) => {
+      const btn = event.target.closest("button.page-btn");
+      if (!btn) return;
+
+      const nav = btn.dataset.nav;
+      if (nav === "prev") {
+        state.page = Math.max(1, state.page - 1);
+        renderTable();
+        return;
+      }
+
+      if (nav === "next") {
+        const totalPage = Math.max(
+          1,
+          Math.ceil(getDisplayUsers().length / state.pageSize),
+        );
+        state.page = Math.min(totalPage, state.page + 1);
+        renderTable();
+        return;
+      }
+
+      const page = Number(btn.dataset.page);
+      if (!page) return;
+      state.page = page;
       renderTable();
-      return;
-    }
-
-    const page = Number(btn.dataset.page);
-    if (!page) return;
-    state.page = page;
-    renderTable();
-  });
+    });
+  }
 };
 
 const init = () => {

@@ -5,35 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Thống kê chi tiêu theo tháng</title>
     <link rel="stylesheet" href="../css/monthly-report.css" />
-    <link rel="stylesheet" href="../css/reponsive.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
     <header class="header">
-      <div class="logo">📒 Tài Chính Cá Nhân</div>
+      <div class="logo">Finance Dashboard</div>
       <div class="account" id="account">
         <button type="button" id="accountToggle" class="account-toggle">
-          <span id="currentUserName" class="account-label">Tài khoản</span>
+          <span id="currentUserName">Tài khoản</span>
         </button>
-        <div
-          id="accountMenu"
-          class="account-menu"
-          role="menu"
-          aria-label="Tài khoản"
-        >
+        <div id="accountMenu" class="account-menu">
           <div class="account-info">
             <p class="account-info-label">Thông tin tài khoản</p>
-            <p id="accountInfoName" class="account-info-value">-</p>
-            <p id="accountInfoEmail" class="account-info-sub">-</p>
-            <p id="accountInfoRole" class="account-info-sub">-</p>
+            <p id="accountInfoName">-</p>
+            <p id="accountInfoEmail">-</p>
+            <p id="accountInfoRole">-</p>
           </div>
-          <div class="menu-separator"></div>
-          <button
-            type="button"
-            class="menu-item menu-danger"
-            id="menuLogout"
-            role="menuitem"
-          >
+          <button type="button" class="menu-item menu-danger" id="menuLogout">
             Đăng xuất
           </button>
         </div>
@@ -41,85 +29,106 @@
     </header>
 
     <aside class="sidebar" aria-label="Sidebar navigation">
-      <a
-        class="sidebar-item"
-        data-page="information"
-        href="../pages/index.html"
+      <a class="sidebar-item" href="../pages/index.html">Information</a>
+      <a class="sidebar-item" href="../pages/category.html">Category</a>
+      <a class="sidebar-item" href="../pages/history.html">History</a>
+      <a class="sidebar-item active" href="../pages/monthly-report.html"
+        >Monthly Report</a
       >
-        <span class="icon"
-          ><img src="../assets/icons/information.png" alt="Information"
-        /></span>
-        <span>Information</span>
-      </a>
-
-      <a
-        class="sidebar-item"
-        data-page="category"
-        href="../pages/category.html"
-      >
-        <span class="icon"
-          ><img src="../assets/icons/category2.png" alt="Category"
-        /></span>
-        <span>Category</span>
-      </a>
-
-      <a class="sidebar-item" data-page="history" href="../pages/history.html">
-        <span class="icon"
-          ><img src="../assets/icons/history.png" alt="History"
-        /></span>
-        <span>History</span>
-      </a>
-
-      <a
-        class="sidebar-item active"
-        data-page="report"
-        href="../pages/monthly-report.html"
-      >
-        <span class="icon"
-          ><img src="../assets/icons/history.png" alt="Report"
-        /></span>
-        <span>Monthly Report</span>
-      </a>
     </aside>
 
     <section class="hero">
-      <h2>📊 Thống kê chi tiêu theo tháng</h2>
-      <p>Xem nhanh các tháng đạt ngân sách hay vượt ngân sách</p>
+      <h1>Thống kê tài chính theo tháng</h1>
+      <p>Phân tích chi tiêu, dự đoán, cảnh báo và điểm tài chính tổng quan.</p>
     </section>
 
     <main class="container">
-      <h2 class="title">Thống kê chi tiêu theo tháng</h2>
+      <section class="card filter-card">
+        <label for="monthFilter">Chọn tháng</label>
+        <select id="monthFilter"></select>
+      </section>
+
+      <section class="summary-grid">
+        <article class="card summary-card">
+          <p class="label">Tổng chi tháng</p>
+          <p class="value" id="totalSpentValue">0 VND</p>
+        </article>
+        <article class="card summary-card">
+          <p class="label">Ngân sách tháng</p>
+          <p class="value" id="budgetValue">0 VND</p>
+        </article>
+        <article class="card summary-card">
+          <p class="label">Số giao dịch</p>
+          <p class="value" id="transactionCountValue">0</p>
+        </article>
+        <article class="card summary-card">
+          <p class="label">Số danh mục đã dùng</p>
+          <p class="value" id="usedCategoryCountValue">0</p>
+        </article>
+      </section>
+
+      <section class="grid-2">
+        <article class="card">
+          <h3>So sánh với tháng trước</h3>
+          <p id="comparisonPrevious">Tháng trước: 0 VND</p>
+          <p id="comparisonCurrent">Tháng này: 0 VND</p>
+          <p class="comparison-change" id="comparisonChange">Không thay đổi</p>
+        </article>
+        <article class="card">
+          <h3>Dự đoán cuối tháng</h3>
+          <p id="forecastValue">Dự đoán cuối tháng: 0 VND</p>
+          <p id="forecastRisk">Nguy cơ vượt ngân sách: Không</p>
+        </article>
+      </section>
+
+      <section class="grid-2">
+        <article class="card">
+          <h3>Chi tiêu theo danh mục</h3>
+          <canvas id="categoryPieChart" width="320" height="320"></canvas>
+          <ul id="categoryLegend" class="legend-list"></ul>
+        </article>
+        <article class="card">
+          <h3>Top 3 danh mục chi nhiều nhất</h3>
+          <div id="topCategoriesList"></div>
+        </article>
+      </section>
+
+      <section class="grid-3">
+        <article class="card">
+          <h3>Ngày chi tiêu nhiều nhất</h3>
+          <p id="highestDayDate">Ngày tiêu nhiều nhất: --/--</p>
+          <p id="highestDayAmount">Số tiền: 0đ</p>
+        </article>
+        <article class="card">
+          <h3>No-spend streak</h3>
+          <p id="currentStreakText">Bạn đã 0 ngày không chi tiêu</p>
+          <p id="bestStreakText">Kỷ lục: 0 ngày</p>
+        </article>
+        <article class="card score-card">
+          <h3>Financial Score</h3>
+          <p id="financialScoreText" class="score-value">0/100 ⭐</p>
+        </article>
+      </section>
 
       <section class="card">
-        <div class="filter-row">
-          <label for="statusFilter">Lọc theo trạng thái:</label>
-          <select id="statusFilter">
-            <option value="all">Tất cả</option>
-            <option value="ok">Đạt ngân sách</option>
-            <option value="over">Vượt ngân sách</option>
-          </select>
-        </div>
+        <h3>Insight và cảnh báo</h3>
+        <ul id="insightList" class="insight-list"></ul>
       </section>
 
       <section class="card table-wrap">
+        <h3>Top 5 giao dịch lớn nhất</h3>
         <table>
           <thead>
             <tr>
-              <th>Tháng</th>
-              <th>Ngân sách</th>
-              <th>Đã chi</th>
-              <th>Còn lại</th>
-              <th>Trạng thái</th>
+              <th>Ngày</th>
+              <th>Danh mục</th>
+              <th>Số tiền</th>
             </tr>
           </thead>
-          <tbody id="reportTableBody"></tbody>
+          <tbody id="topTransactionsBody"></tbody>
         </table>
       </section>
     </main>
-
-    <footer class="footer">
-      © 2026 Quản Lý Tài Chính Cá Nhân. by Cao Nguyên!
-    </footer>
 
     <script src="../js/monthly-report.js"></script>
   </body>

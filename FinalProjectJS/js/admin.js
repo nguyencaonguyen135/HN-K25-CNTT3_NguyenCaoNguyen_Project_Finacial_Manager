@@ -182,3 +182,6 @@ window.addEventListener("storage", (event) => {
 });
 
 window.setInterval(renderUserKpi, 2000);
+
+
+
