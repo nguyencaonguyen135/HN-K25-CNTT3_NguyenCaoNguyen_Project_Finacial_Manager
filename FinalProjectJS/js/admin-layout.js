@@ -11,23 +11,26 @@ const initAdminMenuActive = () => {
 
 const initAdminSignOut = () => {
   const signOutBtn = adminById("signOutBtn");
-  if (!signOutBtn) return;
+  if (!signOutBtn) 
+    return;
 
   signOutBtn.addEventListener("click", () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (!result.isConfirmed) return;
-      localStorage.removeItem("currentUser");
-      localStorage.removeItem("currentUserId");
-      window.location.href = "login.html";
-    });
+      Swal.fire({
+        title: "Bạn có chắc muốn đăng xuất?",
+        text: "Bạn sẽ cần đăng nhập lại để tiếp tục.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Có, đăng xuất",
+        cancelButtonText: "Hủy",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem("currentUser");
+          localStorage.removeItem("currentUserId");
+          window.location.href = "login.html";
+        }
+      });
   });
 };
 

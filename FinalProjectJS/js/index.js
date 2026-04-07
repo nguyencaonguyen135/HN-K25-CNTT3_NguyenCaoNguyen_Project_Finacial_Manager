@@ -44,7 +44,8 @@ const saveUsers = (users) =>
   localStorage.setItem("users", JSON.stringify(users));
 
 // Lưu dữ liệu gốc lần đầu
-if (!localStorage.getItem("users")) saveUsers(users);
+if (!localStorage.getItem("users")) 
+  saveUsers(users);
 
 // Lấy user đang đăng nhập dựa trên currentUser/currentUserId.
 const getCurrentUser = () => {
@@ -89,7 +90,8 @@ initScopedFinanceData();
 // Cập nhật menu sidebar active theo trang hiện tại.
 const setSidebarActiveByPage = () => {
   const sidebarItems = document.querySelectorAll(".sidebar-item");
-  if (!sidebarItems.length) return;
+  if (!sidebarItems.length) 
+    return;
 
   const currentPath = window.location.pathname.toLowerCase();
 
@@ -119,7 +121,9 @@ const accountInfoName = document.getElementById("accountInfoName");
 const accountInfoEmail = document.getElementById("accountInfoEmail");
 const accountInfoRole = document.getElementById("accountInfoRole");
 
-if (currentUserName) currentUserName.textContent = "Tài khoản";
+if (currentUserName) {
+  currentUserName.textContent = "Tài khoản";
+} 
 
 if (accountInfoName) {
   accountInfoName.textContent =
@@ -519,7 +523,8 @@ const resetBudgetForm = () => {
 // Tính và hiển thị số dư còn lại theo tháng đang chọn.
 const renderMonthlyBalance = () => {
   // nếu thiếu element thì dừng
-  if (!monthInput || !budgetInput || !remainingText) return;
+  if (!monthInput || !budgetInput || !remainingText) 
+    return;
 
   // mặc định luôn hiển thị 0 VND cho tài khoản chưa có dữ liệu
   remainingText.textContent = formatVnd(0);

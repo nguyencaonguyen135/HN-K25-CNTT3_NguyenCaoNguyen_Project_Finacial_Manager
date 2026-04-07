@@ -341,7 +341,8 @@ const getSpentByMonth = (month) => {
 const renderRemainingBudget = () => {
   const monthSelect = document.getElementById("monthSelect");
   const remainingText = document.getElementById("remainingText");
-  if (!monthSelect || !remainingText) return;
+  if (!monthSelect || !remainingText) 
+    return;
 
   const month = monthSelect.value;
   if (!month) {
