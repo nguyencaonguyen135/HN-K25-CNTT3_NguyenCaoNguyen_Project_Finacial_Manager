@@ -1,4 +1,4 @@
-const users = [
+﻿const users = [
   {
     id: 1,
     fullName: "Nguyen Van A",
@@ -31,77 +31,99 @@ const users = [
   },
 ];
 
-// Đọc dữ liệu JSON từ localStorage, lỗi thì trả fallback.
+// Đọc/ghi localStorage, scope theo user và format dữ liệu.
 const getData = (key, fallback) => {
   return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
 };
 
-// Ghi dữ liệu JSON vào localStorage.
-const setData = (key, value) =>
+const setData = (key, value) => {
   localStorage.setItem(key, JSON.stringify(value));
-
-// Lấy id user hiện tại; chưa login thì dùng guest.
-const getCurrentUserId = () =>
-  localStorage.getItem("currentUser") ||
-  localStorage.getItem("currentUserId") ||
-  "guest";
-
-const getLoggedInUserId = () =>
-  localStorage.getItem("currentUser") || localStorage.getItem("currentUserId");
-
-// Tạo key theo user để tách dữ liệu từng tài khoản.
-const getUserScopedKey = (baseKey) => `${baseKey}_${getCurrentUserId()}`;
-
-// Đọc/ghi dữ liệu theo key đã scope user.
-const getScopedData = (key, fallback) =>
-  getData(getUserScopedKey(key), fallback);
-
-const setScopedData = (key, value) => setData(getUserScopedKey(key), value);
-
-// Tiện ích format số 1 chữ số thành 2 chữ số (vd: 4 -> 04).
-const pad2 = (n) => String(n).padStart(2, "0");
-
-// Lấy tháng hiện tại dạng YYYY-MM.
-const getCurrentMonth = () => {
-  const now = new Date();
-  return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}`;
 };
 
-// Đọc/lưu tháng đang chọn của user.
-const getSelectedBudgetMonth = () =>
-  localStorage.getItem(getUserScopedKey("selectedBudgetMonth"));
+const getCurrentUserId = () => {
+  return (
+    localStorage.getItem("currentUser") ||
+    localStorage.getItem("currentUserId") ||
+    "guest"
+  );
+};
 
-const saveSelectedBudgetMonth = (month) =>
+const getLoggedInUserId = () => {
+  return (
+    localStorage.getItem("currentUser") || localStorage.getItem("currentUserId")
+  );
+};
+
+const getUserScopedKey = (baseKey) => {
+  return `${baseKey}_${getCurrentUserId()}`;
+};
+
+const getScopedData = (key, fallback) => {
+  return getData(getUserScopedKey(key), fallback);
+};
+
+const setScopedData = (key, value) => {
+  setData(getUserScopedKey(key), value);
+};
+
+const pad2 = (n) => {
+  return String(n).padStart(2, "0");
+};
+
+const getCurrentMonth = () => {
+  return new Date().toISOString().slice(0, 7);
+};
+
+const getSelectedBudgetMonth = () => {
+  return localStorage.getItem(getUserScopedKey("selectedBudgetMonth"));
+};
+
+const saveSelectedBudgetMonth = (month) => {
   localStorage.setItem(getUserScopedKey("selectedBudgetMonth"), month);
+};
 
-// Format tiền hiển thị kiểu Việt Nam.
-const formatVnd = (value) =>
-  `${Number(value || 0).toLocaleString("vi-VN")} VND`;
+const formatVnd = (value) => {
+  return `${Number(value || 0).toLocaleString("vi-VN")} VND`;
+};
 
-// Tập hàm truy cập dữ liệu chính.
-const getUsers = () => getData("users", users);
-const saveUsers = (users) => setData("users", users);
-const getBudgets = () => getScopedData("budgets", {});
-const saveBudgets = (data) => setScopedData("budgets", data);
-const getRemainingBudgets = () => getScopedData("remainingBudgets", {});
-const saveRemainingBudgets = (data) => setScopedData("remainingBudgets", data);
+const getUsers = () => {
+  return getData("users", users);
+};
+const saveUsers = (users) => {
+  setData("users", users);
+};
+const getBudgets = () => {
+  return getScopedData("budgets", {});
+};
+const saveBudgets = (data) => {
+  setScopedData("budgets", data);
+};
+const getRemainingBudgets = () => {
+  return getScopedData("remainingBudgets", {});
+};
+const saveRemainingBudgets = (data) => {
+  setScopedData("remainingBudgets", data);
+};
 
-// Tính tổng tiền đã chi của 1 tháng.
+// Tính toán ngân sách: tổng đã chi theo tháng và cập nhật số dư.
 const getSpentByMonth = (month) => {
   const transactions = getScopedData("transactions", []);
   return transactions
-    .filter((item) => String(item.createdDate || "").startsWith(month))
-    .reduce((total, item) => total + Number(item.total || 0), 0);
+    .filter((item) => {
+      return String(item.createdDate || "").startsWith(month);
+    })
+    .reduce((total, item) => {
+      return total + Number(item.total || 0);
+    }, 0);
 };
 
-// Lưu số tiền còn lại theo tháng.
 const setRemainingByMonth = (month, remaining) => {
   const remainingBudgets = getRemainingBudgets();
   remainingBudgets[month] = Number(remaining || 0);
   saveRemainingBudgets(remainingBudgets);
 };
 
-// State UI của trang history (tháng, từ khóa, sort, phân trang).
+// State UI của trang history: lọc, sắp xếp, và phân trang.
 const state = {
   month: getSelectedBudgetMonth() || getCurrentMonth(),
   keyword: "",
@@ -110,22 +132,27 @@ const state = {
   pageSize: 5,
 };
 
-// Hiển thị cảnh báo/ thông báo ở đầu bảng lịch sử.
 const setHistoryWarning = (message, type = "error") => {
   const warning = document.getElementById("historyWarning");
-  if (!warning) return;
+  if (!warning) {
+    return;
+  }
 
   warning.textContent = message || "";
   warning.classList.toggle("success", type === "success");
 };
 
-// Khởi tạo dữ liệu storage theo key đã scope user.
+// Khởi tạo storage và bảo vệ truy cập khi chưa đăng nhập.
 const initStorage = () => {
-  if (!localStorage.getItem("users")) saveUsers(users);
+  if (!localStorage.getItem("users")) {
+    saveUsers(users);
+  }
 
   const ensureScopedJson = (baseKey, fallback) => {
     const scopedKey = getUserScopedKey(baseKey);
-    if (localStorage.getItem(scopedKey)) return;
+    if (localStorage.getItem(scopedKey)) {
+      return;
+    }
 
     localStorage.setItem(scopedKey, JSON.stringify(fallback));
   };
@@ -136,7 +163,6 @@ const initStorage = () => {
   ensureScopedJson("remainingBudgets", {});
 };
 
-// Kiểm tra đăng nhập trước khi vào trang history.
 const requireLogin = () => {
   const userId = getLoggedInUserId();
   if (!userId) {
@@ -146,18 +172,25 @@ const requireLogin = () => {
   return true;
 };
 
-// Lấy object user hiện tại.
 const getCurrentUser = () => {
   const userId = getLoggedInUserId();
-  if (!userId) return null;
+  if (!userId) {
+    return null;
+  }
   const users = getUsers();
-  return users.find((u) => String(u.id) === String(userId)) || null;
+  return (
+    users.find((u) => {
+      return String(u.id) === String(userId);
+    }) || null
+  );
 };
 
-// Highlight item sidebar theo trang hiện tại.
+// Header/Sidebar: đồng bộ trạng thái menu và thông tin tài khoản.
 const setSidebarActiveByPage = () => {
   const sidebarItems = document.querySelectorAll(".sidebar-item");
-  if (!sidebarItems.length) return;
+  if (!sidebarItems.length) {
+    return;
+  }
 
   const currentPath = window.location.pathname.toLowerCase();
   let currentPage = "information";
@@ -179,33 +212,46 @@ const setSidebarActiveByPage = () => {
   });
 };
 
-// Khởi tạo dropdown account + thông tin user + logout.
 const initAccountDropdown = () => {
   const accountEl = document.getElementById("account");
   const accountToggle = document.getElementById("accountToggle");
-  const currentUserNameEl = document.getElementById("currentUserName");
+  const currentUserName = document.getElementById("currentUserName");
   const accountInfoName = document.getElementById("accountInfoName");
   const accountInfoEmail = document.getElementById("accountInfoEmail");
   const accountInfoRole = document.getElementById("accountInfoRole");
   const menuLogoutBtn = document.getElementById("menuLogout");
 
-  if (!accountEl || !accountToggle) return;
+  if (!accountEl || !accountToggle) {
+    return;
+  }
 
-  const user = getCurrentUser();
-  if (currentUserNameEl) currentUserNameEl.textContent = "Tài khoản";
-  if (accountInfoName)
-    accountInfoName.textContent = user && user.fullName ? user.fullName : "-";
-  if (accountInfoEmail)
-    accountInfoEmail.textContent = user && user.email ? user.email : "-";
-  if (accountInfoRole)
-    accountInfoRole.textContent = `Vai trò: ${user && user.role ? user.role : "user"}`;
+  const currentUser = getCurrentUser();
+
+  if (currentUserName) {
+    currentUserName.textContent = "Tài khoản";
+  }
+  if (accountInfoName) {
+    accountInfoName.textContent =
+      currentUser && currentUser.fullName ? currentUser.fullName : "-";
+  }
+  if (accountInfoEmail) {
+    accountInfoEmail.textContent =
+      currentUser && currentUser.email ? currentUser.email : "-";
+  }
+  if (accountInfoRole) {
+    accountInfoRole.textContent =
+      "Vai trò: " +
+      (currentUser && currentUser.role ? currentUser.role : "user");
+  }
 
   accountToggle.addEventListener("click", (e) => {
     e.stopPropagation();
     accountEl.classList.toggle("open");
   });
 
-  document.addEventListener("click", () => accountEl.classList.remove("open"));
+  document.addEventListener("click", () => {
+    accountEl.classList.remove("open");
+  });
 
   if (menuLogoutBtn) {
     menuLogoutBtn.addEventListener("click", () => {
@@ -229,7 +275,7 @@ const initAccountDropdown = () => {
   }
 };
 
-// Map categoryId -> categoryName để render bảng giao dịch.
+// Danh mục: map categoryId -> name và render option theo tháng.
 const getCategoryMap = () => {
   const monthly = getScopedData("monthlyCategories", []);
   const map = new Map();
@@ -243,29 +289,31 @@ const getCategoryMap = () => {
   return map;
 };
 
-// Lấy danh sách category của đúng tháng.
 const getCategoriesByMonth = (month) => {
   const monthly = getScopedData("monthlyCategories", []);
-  const monthObj = monthly.find((m) => m.month === month);
+  const monthObj = monthly.find((m) => {
+    return m.month === month;
+  });
   return monthObj && monthObj.categories ? monthObj.categories : [];
 };
 
-// Render option danh mục trong form thêm giao dịch.
 const renderCategoryOptions = () => {
   const categoryInput = document.getElementById("categoryInput");
-  if (!categoryInput) return;
+  if (!categoryInput) {
+    return;
+  }
 
   const categories = getCategoriesByMonth(state.month);
 
   categoryInput.innerHTML = [
     '<option value="">Tiền chi tiêu</option>',
-    ...categories.map(
-      (cat) => `<option value="${cat.id}">${cat.name}</option>`,
-    ),
+    ...categories.map((cat) => {
+      return `<option value="${cat.id}">${cat.name}</option>`;
+    }),
   ].join("");
 };
 
-// Chuẩn hóa dữ liệu giao dịch để dễ filter/sort/render.
+// Chuẩn hóa giao dịch và xử lý lọc/sort trước khi render.
 const createTransactionViewModel = (item, index, categoryMap) => {
   const amount = Number(item.total || 0);
   const createdDate = String(item.createdDate || "");
@@ -285,47 +333,59 @@ const getProcessedTransactions = () => {
   const transactions = getScopedData("transactions", []);
   const categoryMap = getCategoryMap();
 
-  return transactions.map((item, index) =>
-    createTransactionViewModel(item, index, categoryMap),
-  );
+  return transactions.map((item, index) => {
+    return createTransactionViewModel(item, index, categoryMap);
+  });
 };
 
-// Lọc theo tháng + keyword rồi sắp xếp theo state.sort.
 const filterAndSortTransactions = () => {
   const keyword = state.keyword.trim().toLowerCase();
-  const rows = getProcessedTransactions().filter(
-    (row) => row.month === state.month,
-  );
+  const rows = getProcessedTransactions().filter((row) => {
+    return row.month === state.month;
+  });
 
-  const filteredRows = keyword
-    ? rows.filter((row) => {
-        const note = String(row.note || "").toLowerCase();
-        const category = String(row.categoryName || "").toLowerCase();
-        return note.includes(keyword) || category.includes(keyword);
-      })
-    : rows;
+  let filteredRows = rows;
 
-  // Tạo bản sao trước khi sort để không làm đổi mảng gốc.
+  if (keyword !== "") {
+    filteredRows = rows.filter((row) => {
+      const noteText = (row.note || "").toLowerCase();
+      const categoryText = (row.categoryName || "").toLowerCase();
+
+      const matchNote = noteText.includes(keyword);
+      const matchCategory = categoryText.includes(keyword);
+
+      return matchNote || matchCategory;
+    });
+  }
+
   if (state.sort === "amount-asc") {
-    return [...filteredRows].sort((a, b) => a.amount - b.amount);
+    return [...filteredRows].sort((a, b) => {
+      return a.amount - b.amount;
+    });
   }
 
   if (state.sort === "amount-desc") {
-    return [...filteredRows].sort((a, b) => b.amount - a.amount);
+    return [...filteredRows].sort((a, b) => {
+      return b.amount - a.amount;
+    });
   }
 
   return filteredRows;
 };
 
-// Render bảng lịch sử giao dịch và trạng thái empty.
+// Bảng lịch sử: render rows, empty state và phân trang.
 const renderTable = () => {
   const body = document.getElementById("historyTableBody");
   const empty = document.getElementById("historyEmpty");
-  if (!body || !empty) return;
+  if (!body || !empty) {
+    return;
+  }
 
   const rows = filterAndSortTransactions();
   const totalPage = Math.max(1, Math.ceil(rows.length / state.pageSize));
-  if (state.page > totalPage) state.page = totalPage;
+  if (state.page > totalPage) {
+    state.page = totalPage;
+  }
 
   const start = (state.page - 1) * state.pageSize;
   const pageRows = rows.slice(start, start + state.pageSize);
@@ -352,10 +412,11 @@ const renderTable = () => {
   renderPagination(rows.length, totalPage);
 };
 
-// Render phân trang.
 const renderPagination = (totalItems, totalPage) => {
   const pagination = document.getElementById("pagination");
-  if (!pagination) return;
+  if (!pagination) {
+    return;
+  }
 
   if (totalItems <= state.pageSize) {
     pagination.innerHTML = "";
@@ -375,10 +436,12 @@ const renderPagination = (totalItems, totalPage) => {
   `;
 };
 
-// Xóa giao dịch theo index trong mảng transactions.
+// CRUD giao dịch: xóa giao dịch và thêm nhanh từ form.
 const deleteTransaction = (index) => {
   const transactions = getScopedData("transactions", []);
-  if (index < 0 || index >= transactions.length) return;
+  if (index < 0 || index >= transactions.length) {
+    return;
+  }
 
   Swal.fire({
     title: "Bạn có chắc muốn xóa giao dịch này?",
@@ -389,7 +452,9 @@ const deleteTransaction = (index) => {
     confirmButtonText: "Có, xóa",
     cancelButtonText: "Hủy",
   }).then((result) => {
-    if (!result.isConfirmed) return;
+    if (!result.isConfirmed) {
+      return;
+    }
 
     transactions.splice(index, 1);
     setScopedData("transactions", transactions);
@@ -399,13 +464,14 @@ const deleteTransaction = (index) => {
   });
 };
 
-// Thêm mới 1 giao dịch từ form quick-add.
 const addTransaction = () => {
   const amountInput = document.getElementById("amountInput");
   const categoryInput = document.getElementById("categoryInput");
   const noteInput = document.getElementById("noteInput");
 
-  if (!amountInput || !categoryInput || !noteInput) return;
+  if (!amountInput || !categoryInput || !noteInput) {
+    return;
+  }
 
   const amount = Number(amountInput.value);
   const categoryId = Number(categoryInput.value);
@@ -438,7 +504,6 @@ const addTransaction = () => {
   const dateText = `${state.month}-${pad2(now.getDate())}`;
 
   const transactions = getScopedData("transactions", []);
-  // Đưa giao dịch mới lên đầu để hiển thị đầu tiên ở chế độ sắp xếp mặc định.
   transactions.unshift({
     id: Date.now(),
     categoryId,
@@ -458,10 +523,12 @@ const addTransaction = () => {
   renderTable();
 };
 
-// Tính và render tiền còn lại của tháng hiện tại.
+// Ngân sách tháng: render số dư còn lại và tìm kiếm lịch sử.
 const renderBudget = () => {
   const remainingText = document.getElementById("remainingText");
-  if (!remainingText) return;
+  if (!remainingText) {
+    return;
+  }
 
   const budgets = getBudgets();
   const budgetAmount = Number(budgets[state.month] || 0);
@@ -472,10 +539,11 @@ const renderBudget = () => {
   remainingText.textContent = formatVnd(remainingAmount);
 };
 
-// Tìm kiếm giao dịch theo từ khóa trong history.
 const searchHistory = () => {
   const searchInputElement = document.getElementById("searchInput");
-  if (!searchInputElement) return;
+  if (!searchInputElement) {
+    return;
+  }
 
   const keyword = searchInputElement.value.toLowerCase().trim();
   state.keyword = keyword;
@@ -484,10 +552,12 @@ const searchHistory = () => {
   renderTable();
 };
 
-// Khởi tạo ô chọn tháng và đồng bộ dữ liệu theo tháng.
+// Khởi tạo tháng làm việc và bind toàn bộ sự kiện thao tác.
 const initMonthBudget = () => {
   const monthInput = document.getElementById("monthSelect");
-  if (!monthInput) return;
+  if (!monthInput) {
+    return;
+  }
 
   monthInput.value = state.month;
   saveSelectedBudgetMonth(state.month);
@@ -504,7 +574,6 @@ const initMonthBudget = () => {
   renderBudget();
 };
 
-// Bind toàn bộ sự kiện (sort, search, add, delete, paging).
 const initHistoryActions = () => {
   const sortSelectElement = document.getElementById("sortSelect");
   const searchInput = document.getElementById("searchInput");
@@ -534,7 +603,11 @@ const initHistoryActions = () => {
   searchBtn.addEventListener("click", searchHistory);
   addTransactionBtn.addEventListener("click", addTransaction);
   [searchInput, addTransactionBtn].forEach((el) => {
-    if (el) el.addEventListener("focus", () => setHistoryWarning(""));
+    if (el) {
+      el.addEventListener("focus", () => {
+        setHistoryWarning("");
+      });
+    }
   });
 
   const amountInput = document.getElementById("amountInput");
@@ -542,24 +615,38 @@ const initHistoryActions = () => {
   const noteInput = document.getElementById("noteInput");
 
   [amountInput, categoryInput, noteInput].forEach((el) => {
-    if (el) el.addEventListener("input", () => setHistoryWarning(""));
-    if (el) el.addEventListener("change", () => setHistoryWarning(""));
+    if (el) {
+      el.addEventListener("input", () => {
+        setHistoryWarning("");
+      });
+    }
+    if (el) {
+      el.addEventListener("change", () => {
+        setHistoryWarning("");
+      });
+    }
   });
 
   searchInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") searchHistory();
+    if (event.key === "Enter") {
+      searchHistory();
+    }
   });
 
   tableBody.addEventListener("click", (event) => {
     const btn = event.target.closest("button[data-index]");
-    if (!btn) return;
+    if (!btn) {
+      return;
+    }
     const index = Number(btn.dataset.index);
     deleteTransaction(index);
   });
 
   pagination.addEventListener("click", (event) => {
     const pageBtn = event.target.closest("button.page-btn");
-    if (!pageBtn) return;
+    if (!pageBtn) {
+      return;
+    }
 
     const nav = pageBtn.dataset.nav;
     if (nav === "prev") {
@@ -579,7 +666,9 @@ const initHistoryActions = () => {
     }
 
     const page = Number(pageBtn.dataset.page);
-    if (!page) return;
+    if (!page) {
+      return;
+    }
     state.page = page;
     renderTable();
   });
@@ -588,10 +677,12 @@ const initHistoryActions = () => {
   renderTable();
 };
 
-// Hàm init tổng của trang history.
+// Entry point: khởi tạo toàn bộ trang khi DOM sẵn sàng.
 const init = () => {
   initStorage();
-  if (!requireLogin()) return;
+  if (!requireLogin()) {
+    return;
+  }
 
   setSidebarActiveByPage();
   initAccountDropdown();

@@ -206,6 +206,10 @@ if (formEl) {
 
 
 
+
+
+
+
 // // Cách 2
 // const emailInput = document.getElementById("email");
 // const passwordInput = document.getElementById("password");
@@ -316,5 +320,4 @@ if (formEl) {
 //     window.location.href = "login.html";
 //   }, 1000);
 // });
-
 

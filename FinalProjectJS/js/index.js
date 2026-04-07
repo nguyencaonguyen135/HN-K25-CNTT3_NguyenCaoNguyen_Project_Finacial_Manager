@@ -1,4 +1,4 @@
-const users = [
+﻿const users = [
   {
     id: 1,
     fullName: "Nguyen Van A",
@@ -31,23 +31,23 @@ const users = [
   },
 ];
 
-// Đọc JSON từ localStorage theo key, lỗi thì trả fallback.
+// Đọc/ghi dữ liệu và lấy thông tin user hiện tại.
 const getData = (key, fallback) => {
   return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
 };
 
-// Lấy danh sách users đang lưu (nếu chưa có thì dùng dữ liệu mẫu).
-const getUsers = () => getData("users", users);
+const getUsers = () => {
+  return getData("users", users);
+};
 
-// Lưu danh sách users xuống localStorage.
-const saveUsers = (users) =>
+const saveUsers = (users) => {
   localStorage.setItem("users", JSON.stringify(users));
+};
 
-// Lưu dữ liệu gốc lần đầu
-if (!localStorage.getItem("users")) 
+if (!localStorage.getItem("users")) {
   saveUsers(users);
+}
 
-// Lấy user đang đăng nhập dựa trên currentUser/currentUserId.
 const getCurrentUser = () => {
   const users = getUsers();
   const id =
@@ -56,20 +56,20 @@ const getCurrentUser = () => {
   return users.find((u) => String(u.id) === String(id));
 };
 
-// Lấy id user hiện tại (nếu chưa login thì dùng "guest").
 const getCurrentUserId = () =>
   localStorage.getItem("currentUser") ||
   localStorage.getItem("currentUserId") ||
   "guest";
 
-// Tạo key theo user để tách dữ liệu tài chính từng tài khoản.
 const getUserScopedKey = (baseKey) => `${baseKey}_${getCurrentUserId()}`;
 
+// Khởi tạo dữ liệu tài chính theo từng user khi đăng nhập lần đầu.
 const initScopedFinanceData = () => {
   const ensureJsonKey = (baseKey, fallback) => {
     const scopedKey = getUserScopedKey(baseKey);
-    if (localStorage.getItem(scopedKey)) 
+    if (localStorage.getItem(scopedKey)) {
       return;
+    }
     localStorage.setItem(scopedKey, JSON.stringify(fallback));
   };
 
@@ -80,18 +80,18 @@ const initScopedFinanceData = () => {
 
 let currentUser = getCurrentUser();
 
-// Nếu chưa đăng nhập thì chuyển về trang login.
 if (!currentUser) {
   window.location.href = "login.html";
 }
 
 initScopedFinanceData();
 
-// Cập nhật menu sidebar active theo trang hiện tại.
+// Sidebar: tự động active menu theo trang hiện tại.
 const setSidebarActiveByPage = () => {
   const sidebarItems = document.querySelectorAll(".sidebar-item");
-  if (!sidebarItems.length) 
+  if (!sidebarItems.length) {
     return;
+  }
 
   const currentPath = window.location.pathname.toLowerCase();
 
@@ -115,7 +115,7 @@ const setSidebarActiveByPage = () => {
 
 setSidebarActiveByPage();
 
-// Render thông tin tài khoản lên header/menu account.
+// Header account: hiển thị thông tin user và vai trò.
 const currentUserName = document.getElementById("currentUserName");
 const accountInfoName = document.getElementById("accountInfoName");
 const accountInfoEmail = document.getElementById("accountInfoEmail");
@@ -123,7 +123,7 @@ const accountInfoRole = document.getElementById("accountInfoRole");
 
 if (currentUserName) {
   currentUserName.textContent = "Tài khoản";
-} 
+}
 
 if (accountInfoName) {
   accountInfoName.textContent =
@@ -138,10 +138,10 @@ if (accountInfoRole) {
     "Vai trò: " + (currentUser && currentUser.role ? currentUser.role : "user");
 }
 
-// Toggle mở/đóng dropdown account ở góc phải header.
 const toggleBtn = document.getElementById("accountToggle");
 const account = document.getElementById("account");
 
+// Dropdown account: mở/đóng khi click trong và ngoài vùng account.
 if (toggleBtn && account) {
   toggleBtn.onclick = (e) => {
     e.stopPropagation();
@@ -155,8 +155,9 @@ if (toggleBtn && account) {
   };
 }
 
-// Xử lý đăng xuất có xác nhận bằng SweetAlert.
 const menuLogoutBtn = document.getElementById("menuLogout");
+
+// Logout: xác nhận trước khi xóa session đăng nhập.
 if (menuLogoutBtn) {
   menuLogoutBtn.addEventListener("click", () => {
     Swal.fire({
@@ -178,16 +179,22 @@ if (menuLogoutBtn) {
   });
 }
 
-// Lấy các input thông tin cá nhân.
 const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("email");
 const phoneInput = document.getElementById("phone");
 const genderInput = document.getElementById("gender");
 
-// Đổ dữ liệu user hiện tại vào form profile.
+// Profile: đổ dữ liệu user hiện tại vào form thông tin cá nhân.
 const renderProfile = () => {
-  if (!nameInput || !emailInput || !phoneInput || !genderInput || !currentUser)
+  if (
+    !nameInput ||
+    !emailInput ||
+    !phoneInput ||
+    !genderInput ||
+    !currentUser
+  ) {
     return;
+  }
 
   nameInput.value = currentUser.fullName;
   emailInput.value = currentUser.email;
@@ -197,9 +204,9 @@ const renderProfile = () => {
 
 renderProfile();
 
-// ===== Cụm đổi mật khẩu =====
 const updateBtn = document.querySelector(".btn-change-info");
 
+// Đổi mật khẩu: lấy các phần tử modal và input liên quan.
 const changePasswordBtn = document.querySelector(".btn-change-password");
 const changePasswordModal = document.getElementById("changePasswordModal");
 const cpCloseBtn = document.getElementById("cpCloseBtn");
@@ -212,36 +219,54 @@ const oldPasswordError = document.getElementById("oldPasswordError");
 const newPasswordError = document.getElementById("newPasswordError");
 const confirmPasswordError = document.getElementById("confirmPasswordError");
 
-// Xóa tất cả thông báo lỗi trong modal đổi mật khẩu.
+// Xóa thông báo lỗi trong modal đổi mật khẩu.
 const clearChangePasswordErrors = () => {
-  if (oldPasswordError) oldPasswordError.textContent = "";
-  if (newPasswordError) newPasswordError.textContent = "";
-  if (confirmPasswordError) confirmPasswordError.textContent = "";
+  if (oldPasswordError) {
+    oldPasswordError.textContent = "";
+  }
+  if (newPasswordError) {
+    newPasswordError.textContent = "";
+  }
+  if (confirmPasswordError) {
+    confirmPasswordError.textContent = "";
+  }
 };
 
-// Mở modal đổi mật khẩu + reset form lỗi/cũ.
 const openChangePasswordModal = () => {
-  if (!changePasswordModal) 
+  if (!changePasswordModal) {
     return;
+  }
   clearChangePasswordErrors();
-  if (oldPasswordInput) oldPasswordInput.value = "";
-  if (newPasswordInput) newPasswordInput.value = "";
-  if (confirmPasswordInput) confirmPasswordInput.value = "";
+  if (oldPasswordInput) {
+    oldPasswordInput.value = "";
+  }
+  if (newPasswordInput) {
+    newPasswordInput.value = "";
+  }
+  if (confirmPasswordInput) {
+    confirmPasswordInput.value = "";
+  }
   changePasswordModal.classList.add("show");
 };
 
-// Đóng modal đổi mật khẩu + reset form lỗi/cũ.
 const closeChangePasswordModal = () => {
-  if (!changePasswordModal) 
+  if (!changePasswordModal) {
     return;
+  }
   clearChangePasswordErrors();
-  if (oldPasswordInput) oldPasswordInput.value = "";
-  if (newPasswordInput) newPasswordInput.value = "";
-  if (confirmPasswordInput) confirmPasswordInput.value = "";
+  if (oldPasswordInput) {
+    oldPasswordInput.value = "";
+  }
+  if (newPasswordInput) {
+    newPasswordInput.value = "";
+  }
+  if (confirmPasswordInput) {
+    confirmPasswordInput.value = "";
+  }
   changePasswordModal.classList.remove("show");
 };
 
-// Validate dữ liệu đổi mật khẩu (rỗng, sai mật khẩu cũ, độ dài, confirm).
+// Validate đổi mật khẩu: kiểm tra rỗng, mật khẩu cũ, độ dài và xác nhận.
 const validateChangePassword = () => {
   clearChangePasswordErrors();
 
@@ -258,18 +283,23 @@ const validateChangePassword = () => {
   let isValid = true;
 
   if (!oldPassword) {
-    if (oldPasswordError) oldPasswordError.textContent = "Không được để trống";
+    if (oldPasswordError) {
+      oldPasswordError.textContent = "Không được để trống";
+    }
     isValid = false;
   }
 
   if (!newPassword) {
-    if (newPasswordError) newPasswordError.textContent = "Không được để trống";
+    if (newPasswordError) {
+      newPasswordError.textContent = "Không được để trống";
+    }
     isValid = false;
   }
 
   if (!confirmPassword) {
-    if (confirmPasswordError)
+    if (confirmPasswordError) {
       confirmPasswordError.textContent = "Không được để trống";
+    }
     isValid = false;
   }
 
@@ -278,20 +308,23 @@ const validateChangePassword = () => {
   }
 
   if (btoa(oldPassword) !== String(currentUser ? currentUser.password : "")) {
-    if (oldPasswordError)
+    if (oldPasswordError) {
       oldPasswordError.textContent = "Mật khẩu cũ không đúng";
+    }
     return { isValid: false };
   }
 
   if (newPassword.length < 6) {
-    if (newPasswordError)
+    if (newPasswordError) {
       newPasswordError.textContent = "Mật khẩu phải ít nhất 6 ký tự";
+    }
     return { isValid: false };
   }
 
   if (newPassword !== confirmPassword) {
-    if (confirmPasswordError)
+    if (confirmPasswordError) {
       confirmPasswordError.textContent = "Xác nhận mật khẩu không khớp";
+    }
     return { isValid: false };
   }
 
@@ -301,17 +334,21 @@ const validateChangePassword = () => {
   };
 };
 
-// Lưu mật khẩu mới vào danh sách users và cập nhật currentUser.
+// Cập nhật mật khẩu mới vào danh sách users và localStorage.
 const handleChangePassword = () => {
   const validation = validateChangePassword();
-  if (!validation.isValid) return;
+  if (!validation.isValid) {
+    return;
+  }
 
   const users = getUsers();
   const userIndex = users.findIndex(
     (u) => String(u.id) === String(currentUser ? currentUser.id : ""),
   );
 
-  if (userIndex < 0) return;
+  if (userIndex < 0) {
+    return;
+  }
 
   users[userIndex].password = btoa(validation.newPassword);
   saveUsers(users);
@@ -323,7 +360,6 @@ const handleChangePassword = () => {
   closeChangePasswordModal();
 };
 
-// Bind các sự kiện cho modal đổi mật khẩu.
 if (changePasswordBtn) {
   changePasswordBtn.addEventListener("click", openChangePasswordModal);
 }
@@ -348,10 +384,12 @@ if (changePasswordModal) {
   });
 }
 
-// ===== Cụm cập nhật thông tin profile =====
+// Cập nhật profile: validate email trùng và lưu lại thông tin user.
 if (updateBtn) {
   updateBtn.addEventListener("click", () => {
-    if (!nameInput || !emailInput || !phoneInput || !genderInput) return;
+    if (!nameInput || !emailInput || !phoneInput || !genderInput) {
+      return;
+    }
 
     const users = getUsers();
     const newEmail = emailInput.value.trim().toLowerCase();
@@ -379,7 +417,9 @@ if (updateBtn) {
       confirmButtonText: "Có, cập nhật",
       cancelButtonText: "Hủy",
     }).then((result) => {
-      if (!result.isConfirmed) return;
+      if (!result.isConfirmed) {
+        return;
+      }
 
       currentUser.fullName = nameInput.value.trim();
       currentUser.email = emailInput.value.trim();
@@ -408,40 +448,27 @@ if (updateBtn) {
   });
 }
 
-// Lấy object ngân sách các tháng
-// Lấy object ngân sách theo từng tháng của user hiện tại.
+// Budget data: đọc/ghi ngân sách, số dư, giao dịch và tháng đang chọn.
 const getBudgets = () => {
   return getData(getUserScopedKey("budgets"), {});
 };
 
-// Lấy object tiền còn lại các tháng
-// Lấy object tiền còn lại theo từng tháng của user hiện tại.
 const getRemainingBudgets = () => {
   return getData(getUserScopedKey("remainingBudgets"), {});
 };
 
-// Lấy danh sách giao dịch chi tiêu
-// Lấy danh sách giao dịch của user hiện tại.
 const getTransactions = () => {
   return getData(getUserScopedKey("transactions"), []);
 };
 
-// Lấy tháng đang được chọn trước đó
-// Lấy tháng đã chọn gần nhất của user hiện tại.
 const getSelectedBudgetMonth = () => {
   return localStorage.getItem(getUserScopedKey("selectedBudgetMonth"));
 };
 
-/* ==========================================================
-  2. Hàm lưu dữ liệu vào localStorage
-========================================================== */
-
-// Lưu ngân sách
 const saveBudgets = (data) => {
   localStorage.setItem(getUserScopedKey("budgets"), JSON.stringify(data));
 };
 
-// Lưu tiền còn lại
 const saveRemainingBudgets = (data) => {
   localStorage.setItem(
     getUserScopedKey("remainingBudgets"),
@@ -449,38 +476,25 @@ const saveRemainingBudgets = (data) => {
   );
 };
 
-// Lưu tháng đang chọn
 const saveSelectedBudgetMonth = (month) => {
   localStorage.setItem(getUserScopedKey("selectedBudgetMonth"), month);
 };
 
-/* ==========================================================
-  3. Hàm xử lý tiền
-========================================================== */
-
-// Chuyển input tiền (có thể chứa ký tự) → number
-// Parse input tiền: loại ký tự lạ và ép sang number.
+// Money helpers: parse input tiền và format hiển thị VND.
 const parseMoneyInput = (value) =>
   Number(String(value || "").replace(/[^\d]/g, ""));
 
-// Format tiền hiển thị kiểu VN
-// Format tiền theo chuẩn VN: 1.000.000 VND.
 const formatVnd = (money) =>
   Number(money || 0).toLocaleString("vi-VN") + " VND";
 
-/* ==========================================================
-  4. Tính tổng tiền đã chi trong tháng
-========================================================== */
-
+// Tính tổng tiền đã chi trong tháng từ danh sách giao dịch.
 const getSpentByMonth = (month) => {
   const transactions = getTransactions();
 
-  // Lọc giao dịch theo tháng
   const filteredTransactions = transactions.filter((item) =>
     String(item.createdDate || "").startsWith(month),
   );
 
-  // Tính tổng tiền các giao dịch đã lọc
   const totalSpent = filteredTransactions.reduce(
     (total, item) => total + Number(item.total || 0),
     0,
@@ -488,45 +502,34 @@ const getSpentByMonth = (month) => {
   return totalSpent;
 };
 
-/* ==========================================================
-  5. Lưu tiền còn lại theo tháng
-========================================================== */
-
+// Lưu số dư còn lại theo từng tháng.
 const saveRemainingByMonth = (month, remainingAmount) => {
   const remainingBudgets = getRemainingBudgets();
 
-  // lưu remaining theo key tháng
   remainingBudgets[month] = Number(remainingAmount || 0);
 
   saveRemainingBudgets(remainingBudgets);
 };
-
-/* ==========================================================
-  6. Lấy element DOM
-========================================================== */
 
 const monthInput = document.getElementById("monthSelect");
 const budgetInput = document.getElementById("budgetInput");
 const saveBudgetBtn = document.getElementById("saveBudgetBtn");
 const remainingText = document.getElementById("remainingText");
 
-// Reset ô nhập ngân sách sau khi lưu thành công.
+// Reset input ngân sách sau khi lưu.
 const resetBudgetForm = () => {
-  if (!budgetInput) return;
+  if (!budgetInput) {
+    return;
+  }
   budgetInput.value = "";
 };
 
-/* ==========================================================
-  7. Render số tiền còn lại mỗi tháng
-========================================================== */
-
-// Tính và hiển thị số dư còn lại theo tháng đang chọn.
+// Render số dư tháng hiện tại và đồng bộ lại remainingBudgets.
 const renderMonthlyBalance = () => {
-  // nếu thiếu element thì dừng
-  if (!monthInput || !budgetInput || !remainingText) 
+  if (!monthInput || !budgetInput || !remainingText) {
     return;
+  }
 
-  // mặc định luôn hiển thị 0 VND cho tài khoản chưa có dữ liệu
   remainingText.textContent = formatVnd(0);
 
   const month = monthInput.value;
@@ -535,111 +538,92 @@ const renderMonthlyBalance = () => {
     return;
   }
 
-  // lấy ngân sách tháng
   const budgets = getBudgets();
   const budgetAmount = Number(budgets[month] || 0);
 
-  // tính tiền đã chi
   const spentAmount = getSpentByMonth(month);
 
-  // tính tiền còn lại
   const remainingAmount = budgetAmount - spentAmount;
 
-  // luôn để trống ô nhập để user nhập mới, không đổ lại dữ liệu cũ
   budgetInput.value = "";
 
-  // hiển thị tiền còn lại
   remainingText.textContent = formatVnd(remainingAmount);
 
-  // lưu remaining vào localStorage
   saveRemainingByMonth(month, remainingAmount);
 };
 
-/* ==========================================================
-  8. Khởi tạo app (ngân sách tháng)
-========================================================== */
-
-// Khởi tạo logic ngân sách tháng + bind event lưu/đổi tháng.
+// Khởi tạo module ngân sách tháng và bind các sự kiện chính.
 const initMonthlyBudget = () => {
-  // kiểm tra tồn tại element
-  if (!monthInput || !budgetInput || !saveBudgetBtn || !remainingText) return;
+  if (!monthInput || !budgetInput || !saveBudgetBtn || !remainingText) {
+    return;
+  }
 
-  // tạo dữ liệu mặc định nếu lần đầu dùng web
-  if (!localStorage.getItem(getUserScopedKey("budgets"))) saveBudgets({});
-  if (!localStorage.getItem(getUserScopedKey("remainingBudgets")))
+  if (!localStorage.getItem(getUserScopedKey("budgets"))) {
+    saveBudgets({});
+  }
+  if (!localStorage.getItem(getUserScopedKey("remainingBudgets"))) {
     saveRemainingBudgets({});
+  }
   if (!localStorage.getItem(getUserScopedKey("transactions"))) {
     localStorage.setItem(getUserScopedKey("transactions"), JSON.stringify([]));
   }
 
-  // set tháng mặc định (ưu tiên tháng đã chọn trước đó)
   monthInput.value =
     getSelectedBudgetMonth() ||
     monthInput.value ||
     new Date().toISOString().slice(0, 7);
 
   saveSelectedBudgetMonth(monthInput.value);
-
-  /* ========================
-     EVENT: CLICK SAVE BUDGET
-  ======================== */
   saveBudgetBtn.addEventListener("click", () => {
     const month = monthInput.value;
     const money = parseMoneyInput(budgetInput.value);
 
-    // validate chọn tháng
-    if (!month)
+    if (!month) {
       return Swal.fire("Chưa chọn tháng", "Vui lòng chọn tháng", "warning");
+    }
 
-    // validate nhập tiền
-    if (!budgetInput.value.trim() || isNaN(money))
+    if (!budgetInput.value.trim() || isNaN(money)) {
       return Swal.fire(
         "Chưa nhập tiền",
         "Vui lòng nhập ngân sách tháng",
         "warning",
       );
+    }
 
-    if (budgetInput.value.trim() < 0)
+    if (budgetInput.value.trim() < 0) {
       return Swal.fire(
         "Tiền không hợp lệ",
         "Vui lòng nhập ngân sách tháng lớn hơn 0",
         "warning",
       );
+    }
 
-    // lưu ngân sách
     const budgets = getBudgets();
     budgets[month] = money;
     saveBudgets(budgets);
     saveSelectedBudgetMonth(month);
 
-    // tính & hiển thị tiền còn lại
     const spentAmount = getSpentByMonth(month);
     const remainingAmount = money - spentAmount;
     remainingText.textContent = formatVnd(remainingAmount);
 
     saveRemainingByMonth(month, remainingAmount);
 
-    // reset input để nhập ngân sách mới nhanh hơn
     resetBudgetForm();
 
     Swal.fire({
-        title: "Thành công!",
-        text: "Ngân sách tháng đã được cập nhật",
-        icon: "success",
-        timer: 1000,
-        showConfirmButton: false,
-      });
+      title: "Thành công!",
+      text: "Ngân sách tháng đã được cập nhật",
+      icon: "success",
+      timer: 1000,
+      showConfirmButton: false,
+    });
   });
-
-  /* ========================
-     EVENT: ĐỔI THÁNG
-  ======================== */
   monthInput.addEventListener("change", () => {
     saveSelectedBudgetMonth(monthInput.value);
     renderMonthlyBalance();
   });
 
-  // quay lại tab → cập nhật lại số tiền
   window.addEventListener("focus", renderMonthlyBalance);
 
   renderMonthlyBalance();

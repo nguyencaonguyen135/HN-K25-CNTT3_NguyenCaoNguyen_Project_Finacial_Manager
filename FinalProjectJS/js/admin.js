@@ -1,3 +1,5 @@
+const store = window.StorageService.createLegacyStorage();
+
 const byId = (id) => document.getElementById(id);
 
 const defaultUsers = [
@@ -182,6 +184,5 @@ window.addEventListener("storage", (event) => {
 });
 
 window.setInterval(renderUserKpi, 2000);
-
 
 

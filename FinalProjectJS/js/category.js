@@ -1,57 +1,71 @@
-// Đọc JSON từ localStorage, lỗi thì trả fallback.
+﻿// localStorage và format dữ liệu dùng chung.
 const getData = (key, fallback) => {
   return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
 };
 
-// Ghi JSON vào localStorage.
-const setData = (key, value) =>
+const setData = (key, value) => {
   localStorage.setItem(key, JSON.stringify(value));
-
-// Lấy user id hiện tại, nếu chưa login thì null.
-const getCurrentUserId = () =>
-  localStorage.getItem("currentUser") ||
-  localStorage.getItem("currentUserId") ||
-  null;
-
-// Tạo key theo user để tách dữ liệu danh mục/ngân sách.
-const getUserScopedKey = (baseKey) => `${baseKey}_${getCurrentUserId()}`;
-
-// Lấy tháng hiện tại theo định dạng YYYY-MM.
-const getCurrentMonth = () => new Date().toISOString().slice(0, 7);
-
-// Đọc/lưu tháng đã chọn của user.
-const getSelectedBudgetMonth = () =>
-  localStorage.getItem(getUserScopedKey("selectedBudgetMonth"));
-
-const saveSelectedBudgetMonth = (month) =>
-  localStorage.setItem(getUserScopedKey("selectedBudgetMonth"), month);
-
-// Format số tiền hiển thị kiểu VND.
-const formatVnd = (value) =>
-  `${Number(value || 0).toLocaleString("vi-VN")} VND`;
-
-// ===== Du lieu theo user =====
-// Nhóm hàm lấy/lưu dữ liệu scope theo user.
-const getBudgets = () => getData(getUserScopedKey("budgets"), {});
-const getTransactions = () => getData(getUserScopedKey("transactions"), []);
-const getMonthlyCategories = () =>
-  getData(getUserScopedKey("monthlyCategories"), []);
-const saveMonthlyCategories = (data) =>
-  setData(getUserScopedKey("monthlyCategories"), data);
-
-// editingId khác null nghĩa là đang ở chế độ sửa danh mục.
-let editingId = null;
-
-// Lấy record của đúng tháng trong monthlyCategories.
-const getMonthRecord = (month) => {
-  const monthly = getMonthlyCategories();
-  return monthly.find((m) => m.month === month) || null;
 };
 
-// Đảm bảo tháng hiện tại luôn có record categories để thao tác.
+const getCurrentUserId = () => {
+  return (
+    localStorage.getItem("currentUser") ||
+    localStorage.getItem("currentUserId") ||
+    null
+  );
+};
+
+const getUserScopedKey = (baseKey) => {
+  return `${baseKey}_${getCurrentUserId()}`;
+};
+
+const getCurrentMonth = () => {
+  return new Date().toISOString().slice(0, 7);
+};
+
+const getSelectedBudgetMonth = () => {
+  return localStorage.getItem(getUserScopedKey("selectedBudgetMonth"));
+};
+
+const saveSelectedBudgetMonth = (month) => {
+  localStorage.setItem(getUserScopedKey("selectedBudgetMonth"), month);
+};
+
+const formatVnd = (value) => {
+  return `${Number(value || 0).toLocaleString("vi-VN")} VND`;
+};
+
+// Tách dữ liệu theo từng tài khoản đăng nhập.
+const getBudgets = () => {
+  return getData(getUserScopedKey("budgets"), {});
+};
+const getTransactions = () => {
+  return getData(getUserScopedKey("transactions"), []);
+};
+const getMonthlyCategories = () => {
+  return getData(getUserScopedKey("monthlyCategories"), []);
+};
+const saveMonthlyCategories = (data) => {
+  setData(getUserScopedKey("monthlyCategories"), data);
+};
+
+let editingId = null;
+
+// Tìm record category của tháng đang thao tác.
+const getMonthRecord = (month) => {
+  const monthly = getMonthlyCategories();
+  return (
+    monthly.find((m) => {
+      return m.month === month;
+    }) || null
+  );
+};
+
 const ensureMonthRecord = (month) => {
   const monthly = getMonthlyCategories();
-  let monthObj = monthly.find((m) => m.month === month);
+  let monthObj = monthly.find((m) => {
+    return m.month === month;
+  });
 
   if (!monthObj) {
     monthObj = { id: Date.now(), month, categories: [] };
@@ -62,28 +76,36 @@ const ensureMonthRecord = (month) => {
   return monthObj;
 };
 
-// Tính tổng spent theo từng category trong 1 tháng từ transactions.
+// Tính tổng chi tiêu theo từng category trong tháng hiện tại.
 const getSpentByCategoryMap = (month) => {
   const transactions = getTransactions();
   const map = new Map();
 
   transactions
-    .filter((t) => String(t.createdDate || "").startsWith(month))
+    .filter((t) => {
+      return String(t.createdDate || "").startsWith(month);
+    })
     .forEach((t) => {
       const categoryId = Number(t.categoryId);
       const amount = Number(t.total || 0);
-      if (!categoryId) return;
+      if (!categoryId) {
+        return;
+      }
       map.set(categoryId, (map.get(categoryId) || 0) + amount);
     });
 
   return map;
 };
 
-// Đồng bộ spent của từng category theo giao dịch mới nhất.
+// Đồng bộ trường spent của category dựa trên transactions mới nhất.
 const syncMonthSpent = (month) => {
   const monthly = getMonthlyCategories();
-  const monthObj = monthly.find((m) => m.month === month);
-  if (!monthObj) return;
+  const monthObj = monthly.find((m) => {
+    return m.month === month;
+  });
+  if (!monthObj) {
+    return;
+  }
 
   const spentMap = getSpentByCategoryMap(month);
   let changed = false;
@@ -96,19 +118,21 @@ const syncMonthSpent = (month) => {
     }
   });
 
-  if (changed) saveMonthlyCategories(monthly);
+  if (changed) {
+    saveMonthlyCategories(monthly);
+  }
 };
 
-// Lấy danh sách category của tháng.
 const getCategories = (month) => {
   const monthObj = getMonthRecord(month);
   return monthObj ? monthObj.categories || [] : [];
 };
 
-// Lưu danh sách categories theo tháng.
 const saveCategories = (month, categories) => {
   const monthly = getMonthlyCategories();
-  const monthObj = monthly.find((m) => m.month === month);
+  const monthObj = monthly.find((m) => {
+    return m.month === month;
+  });
 
   if (!monthObj) {
     monthly.push({ id: Date.now(), month, categories });
@@ -119,17 +143,18 @@ const saveCategories = (month, categories) => {
   saveMonthlyCategories(monthly);
 };
 
-// Render toàn bộ card danh mục trên giao diện.
+// Render danh sách category và cảnh báo vượt hạn mức.
 const renderCategories = () => {
   const grid = document.getElementById("categoryGrid");
   const warning = document.getElementById("categoryWarning");
   const monthSelect = document.getElementById("monthSelect");
 
-  if (!grid || !warning || !monthSelect) return;
+  if (!grid || !warning || !monthSelect) {
+    return;
+  }
 
   const month = monthSelect.value || getCurrentMonth();
 
-  // Cap nhat spent theo giao dich moi nhat
   syncMonthSpent(month);
 
   const categories = getCategories(month);
@@ -141,9 +166,9 @@ const renderCategories = () => {
     return;
   }
 
-  const hasOver = categories.some(
-    (cat) => Number(cat.spent || 0) > Number(cat.budget || 0),
-  );
+  const hasOver = categories.some((cat) => {
+    return Number(cat.spent || 0) > Number(cat.budget || 0);
+  });
   warning.textContent = hasOver ? "Có danh mục đã vượt hạn mức." : "";
 
   grid.innerHTML = categories
@@ -169,30 +194,39 @@ const renderCategories = () => {
     .join("");
 };
 
-// Reset form thêm/sửa danh mục về trạng thái mặc định.
+// Đưa form về trạng thái mặc định sau khi thêm/sửa/xóa.
 const resetForm = () => {
   const categoryNameSelect = document.getElementById("categoryNameSelect");
   const categoryLimitInput = document.getElementById("categoryLimitInput");
   const addCategoryBtn = document.getElementById("addCategoryBtn");
   const warning = document.getElementById("categoryWarning");
 
-  if (categoryNameSelect) categoryNameSelect.value = "";
-  if (categoryLimitInput) categoryLimitInput.value = "";
-  if (addCategoryBtn) addCategoryBtn.textContent = "Thêm danh mục";
-  if (warning) warning.textContent = "";
+  if (categoryNameSelect) {
+    categoryNameSelect.value = "";
+  }
+  if (categoryLimitInput) {
+    categoryLimitInput.value = "";
+  }
+  if (addCategoryBtn) {
+    addCategoryBtn.textContent = "Thêm danh mục";
+  }
+  if (warning) {
+    warning.textContent = "";
+  }
 
   editingId = null;
 };
 
-// Xử lý submit form: thêm mới hoặc cập nhật danh mục.
+// Xử lý submit form: validate, thêm mới hoặc cập nhật category.
 const handleSubmitForm = () => {
   const monthSelect = document.getElementById("monthSelect");
   const categoryNameSelect = document.getElementById("categoryNameSelect");
   const categoryLimitInput = document.getElementById("categoryLimitInput");
   const warning = document.getElementById("categoryWarning");
 
-  if (!monthSelect || !categoryNameSelect || !categoryLimitInput || !warning)
+  if (!monthSelect || !categoryNameSelect || !categoryLimitInput || !warning) {
     return;
+  }
 
   const month = monthSelect.value || getCurrentMonth();
   const name = String(categoryNameSelect.value || "").trim();
@@ -211,7 +245,7 @@ const handleSubmitForm = () => {
   ensureMonthRecord(month);
   const categories = getCategories(month);
 
-  // Nhánh cập nhật danh mục hiện có.
+  // Nhánh sửa category đã chọn.
   if (editingId) {
     const duplicated = categories.some(
       (item) =>
@@ -224,10 +258,12 @@ const handleSubmitForm = () => {
       return;
     }
 
-    const target = categories.find(
-      (item) => Number(item.id) === Number(editingId),
-    );
-    if (!target) return;
+    const target = categories.find((item) => {
+      return Number(item.id) === Number(editingId);
+    });
+    if (!target) {
+      return;
+    }
 
     target.name = name;
     target.budget = limit;
@@ -247,9 +283,9 @@ const handleSubmitForm = () => {
     return;
   }
 
-  const duplicated = categories.some(
-    (item) => String(item.name).toLowerCase() === name.toLowerCase(),
-  );
+  const duplicated = categories.some((item) => {
+    return String(item.name).toLowerCase() === name.toLowerCase();
+  });
 
   if (duplicated) {
     warning.textContent = "Tên danh mục đã tồn tại";
@@ -268,7 +304,7 @@ const handleSubmitForm = () => {
   renderCategories();
 };
 
-// Nạp dữ liệu danh mục lên form để sửa.
+// Nạp dữ liệu category vào form để chỉnh sửa.
 const editCategory = (id) => {
   const monthSelect = document.getElementById("monthSelect");
   const categoryNameSelect = document.getElementById("categoryNameSelect");
@@ -287,8 +323,12 @@ const editCategory = (id) => {
 
   const month = monthSelect.value || getCurrentMonth();
   const categories = getCategories(month);
-  const category = categories.find((item) => Number(item.id) === Number(id));
-  if (!category) return;
+  const category = categories.find((item) => {
+    return Number(item.id) === Number(id);
+  });
+  if (!category) {
+    return;
+  }
 
   categoryNameSelect.value = category.name;
   categoryLimitInput.value = String(category.budget || "");
@@ -297,10 +337,12 @@ const editCategory = (id) => {
   editingId = Number(id);
 };
 
-// Xóa danh mục có xác nhận bằng SweetAlert.
+// Xóa category có xác nhận và cập nhật lại giao diện.
 const deleteCategory = (id) => {
   const monthSelect = document.getElementById("monthSelect");
-  if (!monthSelect) return;
+  if (!monthSelect) {
+    return;
+  }
 
   const month = monthSelect.value || getCurrentMonth();
 
@@ -313,11 +355,13 @@ const deleteCategory = (id) => {
     confirmButtonText: "Có, xóa",
     cancelButtonText: "Hủy",
   }).then((result) => {
-    if (!result.isConfirmed) return;
+    if (!result.isConfirmed) {
+      return;
+    }
 
-    const categories = getCategories(month).filter(
-      (item) => Number(item.id) !== Number(id),
-    );
+    const categories = getCategories(month).filter((item) => {
+      return Number(item.id) !== Number(id);
+    });
 
     saveCategories(month, categories);
 
@@ -329,20 +373,25 @@ const deleteCategory = (id) => {
   });
 };
 
-// Tính tổng tiền đã chi trong tháng (từ transactions).
+// Tính tổng đã chi của tháng để phục vụ phần ngân sách còn lại.
 const getSpentByMonth = (month) => {
   const transactions = getTransactions();
   return transactions
-    .filter((item) => String(item.createdDate || "").startsWith(month))
-    .reduce((total, item) => total + Number(item.total || 0), 0);
+    .filter((item) => {
+      return String(item.createdDate || "").startsWith(month);
+    })
+    .reduce((total, item) => {
+      return total + Number(item.total || 0);
+    }, 0);
 };
 
-// Render số tiền còn lại theo tháng đang chọn.
+// Hiển thị số tiền còn lại của tháng đang chọn.
 const renderRemainingBudget = () => {
   const monthSelect = document.getElementById("monthSelect");
   const remainingText = document.getElementById("remainingText");
-  if (!monthSelect || !remainingText) 
+  if (!monthSelect || !remainingText) {
     return;
+  }
 
   const month = monthSelect.value;
   if (!month) {
@@ -358,16 +407,21 @@ const renderRemainingBudget = () => {
   remainingText.textContent = formatVnd(remainingAmount);
 };
 
-// Lấy user object hiện tại từ users.
+// Auth guard + thông tin user hiện tại.
 const getCurrentUser = () => {
   const userId = getCurrentUserId();
-  if (!userId) return null;
+  if (!userId) {
+    return null;
+  }
 
   const users = getData("users", []);
-  return users.find((u) => String(u.id) === String(userId)) || null;
+  return (
+    users.find((u) => {
+      return String(u.id) === String(userId);
+    }) || null
+  );
 };
 
-// Chặn truy cập khi chưa đăng nhập.
 const requireLogin = () => {
   if (!getCurrentUserId()) {
     window.location.href = "login.html";
@@ -376,33 +430,47 @@ const requireLogin = () => {
   return true;
 };
 
-// Khởi tạo dropdown account + thông tin user + logout.
+// Header account: hiển thị user, toggle menu và xử lý logout.
 const initAccountDropdown = () => {
   const accountEl = document.getElementById("account");
   const accountToggle = document.getElementById("accountToggle");
-  const currentUserNameEl = document.getElementById("currentUserName");
+  const currentUserName = document.getElementById("currentUserName");
   const accountInfoName = document.getElementById("accountInfoName");
   const accountInfoEmail = document.getElementById("accountInfoEmail");
   const accountInfoRole = document.getElementById("accountInfoRole");
   const menuLogoutBtn = document.getElementById("menuLogout");
 
-  if (!accountEl || !accountToggle) return;
+  if (!accountEl || !accountToggle) {
+    return;
+  }
 
-  const user = getCurrentUser();
-  if (currentUserNameEl) currentUserNameEl.textContent = "Tài khoản";
-  if (accountInfoName)
-    accountInfoName.textContent = user ? user.fullName || "-" : "-";
-  if (accountInfoEmail)
-    accountInfoEmail.textContent = user ? user.email || "-" : "-";
-  if (accountInfoRole)
-    accountInfoRole.textContent = `Vai trò: ${user ? user.role || "user" : "user"}`;
+  const currentUser = getCurrentUser();
+
+  if (currentUserName) {
+    currentUserName.textContent = "Tài khoản";
+  }
+  if (accountInfoName) {
+    accountInfoName.textContent =
+      currentUser && currentUser.fullName ? currentUser.fullName : "-";
+  }
+  if (accountInfoEmail) {
+    accountInfoEmail.textContent =
+      currentUser && currentUser.email ? currentUser.email : "-";
+  }
+  if (accountInfoRole) {
+    accountInfoRole.textContent =
+      "Vai trò: " +
+      (currentUser && currentUser.role ? currentUser.role : "user");
+  }
 
   accountToggle.addEventListener("click", (e) => {
     e.stopPropagation();
     accountEl.classList.toggle("open");
   });
 
-  document.addEventListener("click", () => accountEl.classList.remove("open"));
+  document.addEventListener("click", () => {
+    accountEl.classList.remove("open");
+  });
 
   if (menuLogoutBtn) {
     menuLogoutBtn.addEventListener("click", () => {
@@ -426,10 +494,12 @@ const initAccountDropdown = () => {
   }
 };
 
-// Đồng bộ tháng giữa trang category và các trang khác qua selectedBudgetMonth.
+// Đồng bộ tháng làm việc giữa trang category và các trang khác.
 const initMonthSync = () => {
   const monthSelect = document.getElementById("monthSelect");
-  if (!monthSelect) return;
+  if (!monthSelect) {
+    return;
+  }
 
   monthSelect.value = getSelectedBudgetMonth() || getCurrentMonth();
   saveSelectedBudgetMonth(monthSelect.value);
@@ -444,7 +514,7 @@ const initMonthSync = () => {
   renderRemainingBudget();
 };
 
-// Bind sự kiện CRUD danh mục.
+// Gắn sự kiện CRUD category và xử lý click action trên card.
 const initCategoryCrud = () => {
   const addCategoryBtn = document.getElementById("addCategoryBtn");
   const categoryGrid = document.getElementById("categoryGrid");
@@ -456,22 +526,30 @@ const initCategoryCrud = () => {
   if (categoryGrid) {
     categoryGrid.addEventListener("click", (event) => {
       const actionBtn = event.target.closest("button[data-action]");
-      if (!actionBtn) return;
+      if (!actionBtn) {
+        return;
+      }
 
       const action = actionBtn.dataset.action;
       const id = Number(actionBtn.dataset.id);
 
-      if (action === "edit") editCategory(id);
-      if (action === "delete") deleteCategory(id);
+      if (action === "edit") {
+        editCategory(id);
+      }
+      if (action === "delete") {
+        deleteCategory(id);
+      }
     });
   }
 
   renderCategories();
 };
 
-// Hàm init tổng của trang category.
+// Entry point của trang category.
 const init = () => {
-  if (!requireLogin()) return;
+  if (!requireLogin()) {
+    return;
+  }
 
   initAccountDropdown();
   initMonthSync();
